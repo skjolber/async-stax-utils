@@ -28,7 +28,7 @@ Example dependency config:
 ```
 
 # Usage
-The asynchronous nature adds some processing overhead and setup complexity compared to regular synchronous approach. If you prefer skipping to code examples, see [unit tests](src/test/java/com/github/skjolberg). 
+The asynchronous nature adds some processing overhead and setup complexity compared to regular synchronous approach. If you prefer skipping to code examples, see [unit tests](tree/master/src/test/java/com/github/skjolber/asyncstaxutils). 
 
 ## Delegate streams
 Wire up an instance of `StreamProcessor`. Then create a callback,
@@ -45,10 +45,13 @@ for end-of-stream logic. Wrap `OutputStream` and/or `InputStream` instances usin
 ```java
 OutputStream dos = new DelegateOutputStream(out, streamProcessor, callback);
 ```
+
 or input
+
 ```java
 InputStream dis = new DelegateOutputStream(in, streamProcessor, callback);
 ```
+
 and pass the wrappers up/down your processing pipe.
 
 ## Filters
@@ -81,7 +84,7 @@ xmlStreamFilterFactory.setMaxTextNodeLength(maxTextNodeLength);
 XMLStreamFilter filter = xmlStreamFilterFactory.createInstance();
 ```
 
-The resulting filter is usually for one-time use, and holds internally a state.
+The resulting filter is usually for one-time use, as it keeps track of state.
 
 ### StreamProcessorFactory
 Tying streams and filters together, `StreamProcessorFactory` takes a `Writer`, used to store the filtered result, and returns a `StreamProcessor`.
@@ -100,7 +103,7 @@ This processor tries to cache some data, and filter using a synchronous parser i
 ```java
 XMLStreamFilterFactory xmlStreamFilterFactory = XMLStreamFilterFactory.newInstance();
 
-// configure limits
+// configure limits (in char code points)
 xmlStreamFilterFactory.setMaxDocumentSize(maxDocumentSize);
 xmlStreamFilterFactory.setMaxCDATANodeLength(maxCDATANodeLength);
 xmlStreamFilterFactory.setMaxTextNodeLength(maxTextNodeLength);
@@ -120,7 +123,7 @@ and add an output Writer and callback as above. Finally initialize with
 StreamProcessor streamProcessor = new AccumulatorStreamProcessor(maxCacheLengthBytes, factory, output);
 ```
 
-and again pass this instance to to the constructors of `DelegateOutputStream` or `DelegateInputStream`. 
+and again pass this instance to the constructors of `DelegateOutputStream` or `DelegateInputStream`. 
 
 # History
 - [1.0.0]: Initial release.
