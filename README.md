@@ -5,7 +5,7 @@ This project hosts some simple utilities for dealing with XML streams in an asyn
 
 Users of this library will benefit from
 
-  * Input- and Outputstream read-/write-delegates with callback
+  * Input- and Outputstream read-/write-delegates with end-of-stream callback
   * XML filtering
     * Max text- and CDATA-node length
     * Max document length
