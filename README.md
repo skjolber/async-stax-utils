@@ -30,7 +30,7 @@ Example dependency config:
 ```
 
 # Usage
-The asynchronous nature adds some processing overhead and setup complexity compared to regular synchronous approach. If you prefer skipping to code examples, see [unit tests](tree/master/src/test/java/com/github/skjolber/asyncstaxutils). 
+The asynchronous nature adds some processing overhead and setup complexity compared to regular synchronous approach. If you prefer skipping to code examples, see [unit tests](src/test/java/com/github/skjolber/asyncstaxutils). 
 
 ## Delegate streams
 Wire up an instance of `StreamProcessor`. Then create a callback,
