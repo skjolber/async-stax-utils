@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/skjolber/async-stax-utils.svg)](https://travis-ci.org/skjolber/async-stax-utils)
+
 # async-stax-utils
 This project hosts some simple utilities for dealing with XML streams in an asynchronous way. This is achieved through the use of the [Aalto-xml] asynchronous XML-parser.
 
