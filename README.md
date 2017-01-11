@@ -37,7 +37,7 @@ Wire up an instance of `StreamProcessor`. Then create a callback,
 
 ```java
 DelegateStreamCallback callback = new DelegateStreamCallback() {
-	public void closed() {
+	public void closed(StreamProcessor processor) {
 		System.out.println("Stream closed");
 	}
 };

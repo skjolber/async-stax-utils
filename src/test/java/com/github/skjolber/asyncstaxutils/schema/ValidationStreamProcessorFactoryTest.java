@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.InputSource;
 
+import com.github.skjolber.asyncstaxutils.StreamProcessor;
 import com.github.skjolber.asyncstaxutils.io.DelegateInputStream;
 import com.github.skjolber.asyncstaxutils.io.DelegateStreamCallback;
 
@@ -49,7 +50,7 @@ public class ValidationStreamProcessorFactoryTest {
 		DelegateStreamCallback callback = new DelegateStreamCallback() {
 			
 			@Override
-			public void closed() {
+			public void closed(StreamProcessor processor) {
 				Assert.assertFalse(errorHandler.isWarning());
 				Assert.assertFalse(errorHandler.isError());
 				Assert.assertFalse(errorHandler.isFatalError());
@@ -74,7 +75,7 @@ public class ValidationStreamProcessorFactoryTest {
 		
 		Assert.assertTrue(Arrays.equals(xml, bout.toByteArray()));
 
-		verify(spyCallback).closed();
+		verify(spyCallback).closed(streamProcessor);
 		
 	}
 	
@@ -90,7 +91,7 @@ public class ValidationStreamProcessorFactoryTest {
 		DelegateStreamCallback callback = new DelegateStreamCallback() {
 			
 			@Override
-			public void closed() {
+			public void closed(StreamProcessor processor) {
 				Assert.assertFalse(errorHandler.isWarning());
 				Assert.assertTrue(errorHandler.isError());
 				Assert.assertFalse(errorHandler.isFatalError());
@@ -115,7 +116,7 @@ public class ValidationStreamProcessorFactoryTest {
 		
 		Assert.assertTrue(Arrays.equals(xml, bout.toByteArray()));
 
-		verify(spyCallback).closed();
+		verify(spyCallback).closed(streamProcessor);
 		
 	}
 

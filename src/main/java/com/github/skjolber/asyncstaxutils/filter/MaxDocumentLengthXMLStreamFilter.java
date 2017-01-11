@@ -28,6 +28,8 @@ import com.fasterxml.aalto.AsyncXMLStreamReader;
 
 public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 
+	public static final String FILTER_END_MESSAGE = " FILTERED ";
+	
 	protected final int maxDocumentLength;
 	protected final XMLStreamWriterLengthEstimator calculator;
 
@@ -48,6 +50,7 @@ public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 		do {
 			if(characterType != 0 && event != characterType && event != AsyncXMLStreamReader.EVENT_INCOMPLETE) {
 				if(!handleCharacterState(writer)) {
+					
 					return;
 				}
 				reset();		
@@ -59,6 +62,8 @@ public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 				int count = calculator.startElement(reader) + calculator.attributes(reader);
 
 				if(this.count + count > maxDocumentLength) {
+					writer.writeComment(FILTER_END_MESSAGE);
+					
 					return;
 				}
 
@@ -70,7 +75,7 @@ public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 				break;
 			}
 			case XMLStreamConstants.END_ELEMENT:
-				writer.writeEndElement();
+				writer.writeFullEndElement();
 				break;
 			case XMLStreamConstants.CHARACTERS: {
 				
@@ -78,6 +83,8 @@ public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 				characterType = XMLStreamConstants.CHARACTERS;
 
 				if(this.count + length() > maxDocumentLength) {
+					writer.writeComment(FILTER_END_MESSAGE);
+					
 					return;
 				}
 			}
@@ -86,6 +93,8 @@ public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 				int count = calculator.comment(reader);
 
 				if(this.count + count > maxDocumentLength) {
+					writer.writeComment(FILTER_END_MESSAGE);
+					
 					return;
 				}
 
@@ -100,6 +109,8 @@ public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 				characterType = XMLStreamConstants.CDATA;
 
 				if(this.count + 12 + length() > maxDocumentLength) {
+					writer.writeComment(FILTER_END_MESSAGE);
+					
 					return;
 				}
 
@@ -112,6 +123,8 @@ public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 						int count = calculator.xmlDeclaration(reader);
 						
 						if(this.count + count > maxDocumentLength) {
+							writer.writeComment(FILTER_END_MESSAGE);
+							
 							return;
 						}
 	
@@ -124,11 +137,14 @@ public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 			}
 			case XMLStreamConstants.END_DOCUMENT:
 				writer.writeEndDocument();
-				break;
+				
+				return;
 			case XMLStreamConstants.PROCESSING_INSTRUCTION: {
 				int count = calculator.processingInstruction(reader);
 
 				if(this.count + count > maxDocumentLength) {
+					writer.writeComment(FILTER_END_MESSAGE);
+					
 					return;
 				}
 
@@ -153,12 +169,17 @@ public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 	}
 
 	protected boolean handleCharacterState(XMLStreamWriter writer) throws XMLStreamException {
+		if(length() == 0) {
+			return true;
+		}
 		String s = getCharacters().toString();
-
+		
 		if(characterType == XMLStreamConstants.CHARACTERS) {
 			int count = calculator.countEncoded(s);
 
 			if(count + count > maxDocumentLength) {
+				writer.writeComment(FILTER_END_MESSAGE);
+				
 				return false;
 			}
 
@@ -169,6 +190,8 @@ public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 			int count = s.length() + 12;
 
 			if(count + count > maxDocumentLength) {
+				writer.writeComment(FILTER_END_MESSAGE);
+				
 				return false;
 			}
 

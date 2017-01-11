@@ -94,6 +94,6 @@ public class DelegateInputStream extends InputStream {
 			// ignore
 		}
 		
-		callback.closed();
+		callback.closed(listener);
 	}
 }

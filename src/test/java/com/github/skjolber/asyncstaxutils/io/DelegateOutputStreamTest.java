@@ -10,6 +10,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.github.skjolber.asyncstaxutils.StreamProcessor;
 import com.github.skjolber.asyncstaxutils.filter.AbstractStreamTest;
 
 public class DelegateOutputStreamTest extends AbstractStreamTest {
@@ -41,7 +42,7 @@ public class DelegateOutputStreamTest extends AbstractStreamTest {
 		
 		dis.close();
 		
-		verify(callback).closed();
+		verify(callback).closed(listener);
 
 		Assert.assertTrue(Arrays.equals(xml, listener.toByteArray()));
 

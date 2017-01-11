@@ -66,7 +66,7 @@ public class DelegateOutputStream extends OutputStream {
 					// ignore
 				}
 				
-				callback.closed();
+				callback.closed(listener);
 			}
 		}
 		

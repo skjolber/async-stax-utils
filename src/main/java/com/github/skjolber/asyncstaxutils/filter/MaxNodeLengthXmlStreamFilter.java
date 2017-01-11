@@ -131,6 +131,8 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 				int count = calculator.startElement(reader) + calculator.attributes(reader);
 
 				if(this.count + count > maxDocumentLength) {
+					writer.writeComment(FILTER_END_MESSAGE);
+
 					return;
 				}
 				increment(count);
@@ -151,6 +153,8 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 					characterType = XMLStreamConstants.CHARACTERS;
 					
 					if(this.count + length() > maxDocumentLength) {
+						writer.writeComment(FILTER_END_MESSAGE);
+						
 						return;
 					}
 					
@@ -166,6 +170,8 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 				int count = calculator.comment(reader);
 
 				if(this.count + count > maxDocumentLength) {
+					writer.writeComment(FILTER_END_MESSAGE);
+					
 					return;
 				}
 				increment(count);
@@ -182,6 +188,8 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 					characterType = XMLStreamConstants.CDATA;
 
 					if(this.count + 12 + length() > maxDocumentLength) {
+						writer.writeComment(FILTER_END_MESSAGE);
+						
 						return;
 					}
 					
@@ -200,6 +208,8 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 					if (!isEmpty(reader.getVersion())) {
 						int count = calculator.xmlDeclaration(reader);
 						if(this.count + count > maxDocumentLength) {
+							writer.writeComment(FILTER_END_MESSAGE);
+							
 							return;
 						}
 						increment(count);
@@ -216,6 +226,8 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 				int count = calculator.processingInstruction(reader);
 
 				if(this.count + count > maxDocumentLength) {
+					writer.writeComment(FILTER_END_MESSAGE);
+					
 					return;
 				}
 
@@ -254,6 +266,8 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 					int count = XMLStreamWriterLengthEstimator.countEncoded(part, 0, length) + FILTER_TRUNCATE_MESSAGE.length() + number(s.length() - length + ignoredCharacters);
 
 					if(this.count + count > maxDocumentLength) {
+						writer.writeComment(FILTER_END_MESSAGE);
+						
 						return false;
 					}
 					increment(count);
@@ -270,6 +284,8 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 			int count = calculator.countEncoded(s);
 
 			if(this.count + count > maxDocumentLength) {
+				writer.writeComment(FILTER_END_MESSAGE);
+				
 				return false;
 			}
 
@@ -284,6 +300,8 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 					int count = 12 + s.length() - (s.length() - findMaxTextNodeLength) + FILTER_TRUNCATE_MESSAGE.length() + + number(s.length() - findMaxTextNodeLength + ignoredCharacters);
 
 					if(this.count + count > maxDocumentLength) {
+						writer.writeComment(FILTER_END_MESSAGE);
+						
 						return false;
 					}
 					increment(count);
@@ -297,6 +315,8 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 			int count = s.length() + 12;
 
 			if(this.count + count > maxDocumentLength) {
+				writer.writeComment(FILTER_END_MESSAGE);
+				
 				return false;
 			}
 

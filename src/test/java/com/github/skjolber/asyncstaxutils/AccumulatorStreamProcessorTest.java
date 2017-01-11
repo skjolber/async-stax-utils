@@ -34,7 +34,7 @@ public class AccumulatorStreamProcessorTest extends AbstractStreamTest {
 		final int maxCDATANodeLength = 10;
 
 		DelegateStreamCallback callback = new DelegateStreamCallback() {
-			public void closed() {
+			public void closed(StreamProcessor processor) {
 				assertWithin(writer.toString(), maxTextNodeLength, maxCDATANodeLength, maxDocumentLength);
 			}
 		};
@@ -85,7 +85,7 @@ public class AccumulatorStreamProcessorTest extends AbstractStreamTest {
 		final int maxCDATANodeLength = 10;
 
 		DelegateStreamCallback callback = new DelegateStreamCallback() {
-			public void closed() {
+			public void closed(StreamProcessor processor) {
 				assertWithin(writer.toString(), maxTextNodeLength, maxCDATANodeLength, maxDocumentLength);
 			}
 		};

@@ -49,7 +49,7 @@ public class AbstractStreamTest {
 			throw new RuntimeException(e);
 		}
 		
-		Assert.assertTrue(string.length() <= maxDocumentLength);
+		Assert.assertTrue("Ouptut length is " + string.length() + ": " + string, string.length() <= maxDocumentLength);
 	}	
 
 }

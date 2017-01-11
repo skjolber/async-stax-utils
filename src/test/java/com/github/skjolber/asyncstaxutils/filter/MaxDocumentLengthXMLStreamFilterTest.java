@@ -2,6 +2,8 @@ package com.github.skjolber.asyncstaxutils.filter;
 
 import java.io.StringWriter;
 
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.junit.Assert;
@@ -16,7 +18,7 @@ public class MaxDocumentLengthXMLStreamFilterTest extends AbstractStreamTest {
 	public void testElements1() throws Exception {
 		String[] resources = new String[]{"/filter/element1.xml", "/filter/element2.xml", "/filter/element3.xml"};
 		for(String resource : resources) {
-			validateDelta(resource, 0);
+			validateDelta(resource, 0, false);
 		}
 	}
 	
@@ -24,7 +26,7 @@ public class MaxDocumentLengthXMLStreamFilterTest extends AbstractStreamTest {
 	public void testElements2() throws Exception {
 		String[] resources = new String[]{"/filter/element1.xml", "/filter/element2.xml", "/filter/element3.xml"};
 		for(String resource : resources) {
-			validateDelta(resource, -3);
+			validateDelta(resource, -3, true);
 		}
 	}
 	
@@ -32,7 +34,7 @@ public class MaxDocumentLengthXMLStreamFilterTest extends AbstractStreamTest {
 	public void testCDATA() throws Exception {
 		String[] resources = new String[]{"/filter/cdata1.xml", "/filter/cdata2.xml"};
 		for(String resource : resources) {			
-			validate(resource, 17);
+			validate(resource, 17, true);
 		}
 	}
 	
@@ -40,7 +42,7 @@ public class MaxDocumentLengthXMLStreamFilterTest extends AbstractStreamTest {
 	public void testText() throws Exception {
 		String[] resources = new String[]{"/filter/text1.xml", "/filter/text2.xml"};
 		for(String resource : resources) {
-			validate(resource, 17);
+			validate(resource, 17, true);
 		}
 	}
 
@@ -48,22 +50,23 @@ public class MaxDocumentLengthXMLStreamFilterTest extends AbstractStreamTest {
 	public void testProcessingInstruction() throws Exception {
 		String[] resources = new String[]{"/filter/processingInstruction1.xml"};
 		for(String resource : resources) {
-			validate(resource, 17);
+			validate(resource, 17, true);
 		}
 	}	
 
-	private void validateDelta(String resource, int count) throws Exception {
-		validate(resource, IOUtils.toByteArray(getClass().getResourceAsStream(resource)).length + count);
+	private void validateDelta(String resource, int count, boolean filtered) throws Exception {
+		validate(resource, IOUtils.toByteArray(getClass().getResourceAsStream(resource)).length + count, filtered);
 	}
 
-	private void validate(String resource, int count) throws Exception {
+	private void validate(String resource, int count, boolean filtered) throws Exception {
 		AsyncXMLStreamReader<AsyncByteArrayFeeder> reader = inputFactory.createAsyncForByteArray();
-		
+				
 		StringWriter stringWriter = new StringWriter();
 		XMLStreamWriter2 writer = (XMLStreamWriter2) outputFactory.createXMLStreamWriter(stringWriter);
 		
 		byte[] byteArray = IOUtils.toByteArray(getClass().getResourceAsStream(resource));
 		reader.getInputFeeder().feedInput(byteArray, 0, byteArray.length);
+		reader.getInputFeeder().endOfInput();
 		
 		XMLStreamWriterLengthEstimator estimator = new XMLStreamWriterLengthEstimator(); 
 
@@ -72,8 +75,16 @@ public class MaxDocumentLengthXMLStreamFilterTest extends AbstractStreamTest {
 		filter.filter(reader, writer);
 
 		writer.close();
+
+		if(filtered) {
+			count += MaxNodeLengthXmlStreamFilter.FILTER_END_MESSAGE.length() + 7;
+		}
 		
-		Assert.assertEquals(resource, count, stringWriter.toString().length());
+		if(!stringWriter.toString().contains(MaxNodeLengthXmlStreamFilter.FILTER_END_MESSAGE)) {
+			Assert.assertEquals(XMLStreamReader.END_DOCUMENT, reader.getEventType());
+		}
+
+		Assert.assertEquals(resource + " " + stringWriter.toString(), count, stringWriter.toString().length());
 	}	
 		
 }

@@ -17,8 +17,10 @@
 
 package com.github.skjolber.asyncstaxutils.io;
 
+import com.github.skjolber.asyncstaxutils.StreamProcessor;
+
 public interface DelegateStreamCallback {
 
-	void closed();
+	void closed(StreamProcessor processor);
 	
 }
