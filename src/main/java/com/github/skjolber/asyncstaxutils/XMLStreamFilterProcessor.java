@@ -41,7 +41,6 @@ public class XMLStreamFilterProcessor implements StreamProcessor {
 	private XMLStreamFilter filter;
 	
 	private boolean closed;
-	private boolean completed;
 	private boolean error;
 	
 	public XMLStreamFilterProcessor(AsyncXMLStreamReader<AsyncByteArrayFeeder> reader, XMLStreamWriter2 writer, XMLStreamFilter filter) {
@@ -54,28 +53,33 @@ public class XMLStreamFilterProcessor implements StreamProcessor {
 		if(!closed) {
 			try {
 				reader.getInputFeeder().feedInput(buffer, offset, length);
-			} catch (XMLStreamException e1) {
-				logger.error("Problem feeding input", e1);
 				
-				throw new RuntimeException(e1);
-			}
-			try {
-				filter();
+				filter.filter(reader, writer);
+
+				if(reader.getEventType() != AsyncXMLStreamReader.EVENT_INCOMPLETE) { // end of document will never occur here
+					closed = true;
+				}
 			} catch(XMLStreamException e) {
-				handleException(e);
+				handleFilterException(e);
 				
 				closed = true;
-				
-				shutdown();
+			} finally {
+				if(closed) {
+					shutdown();
+				}
 			}
 		}
 	}
 
-	protected void handleException(XMLStreamException e) {
+	protected void handleFilterException(XMLStreamException e) {
+		// this logic might be moved into filters
+		// exceptions will normally be from reader, 
+		// writer would normally never throw an exception
+		logger.warn("Problem filtering XML payload", e);
+		
 		error = true;
-		logger.warn("Problem parsing XML payload", e);
 		try {
-			writer.writeComment(" FILTER END - PARSE ERROR ");
+			writer.writeComment(" FILTERING EXCEPTION OCCORED ");
 		} catch (XMLStreamException e1) {
 			// ignore
 		}
@@ -84,26 +88,15 @@ public class XMLStreamFilterProcessor implements StreamProcessor {
 	public void close() {
 		if(!closed) {
 			closed = true;
-			reader.getInputFeeder().endOfInput();			
 			try {
-				filter();
+				reader.getInputFeeder().endOfInput();			
 				
-				completed = true;
+				filter.filter(reader, writer);
 			} catch(XMLStreamException e) {
-				handleException(e);
+				handleFilterException(e);
 			} finally {
 				shutdown();
 			}
-		}
-	}
-
-	public void filter() throws XMLStreamException {
-		filter.filter(reader, writer);
-		
-		if(reader.getEventType() != AsyncXMLStreamReader.EVENT_INCOMPLETE && reader.getEventType() != XMLStreamReader.END_DOCUMENT) {
-			closed = true;
-			
-			shutdown();
 		}
 	}
 
@@ -111,17 +104,15 @@ public class XMLStreamFilterProcessor implements StreamProcessor {
 		try {
 			reader.close();
 		} catch (XMLStreamException e) {
+			logger.warn("Problem closing reader" , e);
 		}
 		try {
 			writer.close();
 		} catch (XMLStreamException e) {
+			logger.warn("Problem closing writer" , e);
 		}
 	}
-	
-	public boolean isCompleted() {
-		return completed;
-	}
-	
+
 	public boolean isError() {
 		return error;
 	}

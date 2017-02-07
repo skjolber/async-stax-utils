@@ -46,8 +46,9 @@ public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 	}
 	
 	public void filter(XMLStreamReader2 reader, XMLStreamWriter2 writer) throws XMLStreamException {
-		int event = reader.next();
-		do {
+		while(reader.hasNext()) {
+			int event = reader.next();
+			
 			if(characterType != 0 && event != characterType && event != AsyncXMLStreamReader.EVENT_INCOMPLETE) {
 				if(!handleCharacterState(writer)) {
 					
@@ -161,11 +162,7 @@ public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 				throw new IllegalArgumentException("Unsupported event " + event);
 			}
 
-			if(!reader.hasNext()) {
-				break;
-			}
-			event = reader.next();
-		} while (true);		
+		}	
 	}
 
 	protected boolean handleCharacterState(XMLStreamWriter writer) throws XMLStreamException {
