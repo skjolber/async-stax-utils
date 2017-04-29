@@ -1,9 +1,13 @@
 package com.github.skjolber.asyncstaxutils.io;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
@@ -42,11 +46,34 @@ public class DelegateOutputStreamTest extends AbstractStreamTest {
 		
 		dis.close();
 		
-		verify(callback).closed(listener);
+		verify(callback).closed(listener, true);
 
 		Assert.assertTrue(Arrays.equals(xml, listener.toByteArray()));
 
 	}
+	
+	@Test
+	public void testDelegateWithException() throws Exception {
+		
+		OutputStream bin = mock(OutputStream.class);
+		
+		ByteArrayStreamProcessor listener = new ByteArrayStreamProcessor();
+		DelegateStreamCallback callback = mock(DelegateStreamCallback.class);
+		DelegateOutputStream dis = new DelegateOutputStream(bin, listener, callback);
+		
+		byte[] buffer = new byte[4 * 1024];
+		doThrow(new IOException()).when(bin).write(buffer, 0, buffer.length);
+
+		try {
+			dis.write(buffer);
+		} catch(Exception e) {
+			
+		} finally {
+			dis.close();
+		}
+		verify(callback).closed(listener, false);
+	}
+	
 	
 	
 }

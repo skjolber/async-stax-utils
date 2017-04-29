@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  */
-package com.github.skjolber.asyncstaxutils.filter;
+package com.github.skjolber.asyncstaxutils.filter.impl;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;

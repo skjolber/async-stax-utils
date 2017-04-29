@@ -17,10 +17,19 @@
 
 package com.github.skjolber.asyncstaxutils.io;
 
+import java.io.IOException;
+
 import com.github.skjolber.asyncstaxutils.StreamProcessor;
 
 public interface DelegateStreamCallback {
 
-	void closed(StreamProcessor processor);
+	/**
+	 * Notify that streams were closed.
+	 * 
+	 * @param processor target
+	 * @param success true if no {@linkplain IOException} or {@linkplain RuntimeException} occurred.
+	 */
+	
+	void closed(StreamProcessor processor, boolean success);
 	
 }

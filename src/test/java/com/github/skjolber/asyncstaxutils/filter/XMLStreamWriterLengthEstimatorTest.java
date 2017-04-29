@@ -11,6 +11,7 @@ import org.junit.Test;
 import com.fasterxml.aalto.AsyncByteArrayFeeder;
 import com.fasterxml.aalto.AsyncXMLStreamReader;
 import com.fasterxml.aalto.stax.InputFactoryImpl;
+import com.github.skjolber.asyncstaxutils.filter.impl.XMLStreamWriterLengthEstimator;
 
 public class XMLStreamWriterLengthEstimatorTest {
 

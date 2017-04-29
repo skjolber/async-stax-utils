@@ -50,7 +50,8 @@ public class ValidationStreamProcessorFactoryTest {
 		DelegateStreamCallback callback = new DelegateStreamCallback() {
 			
 			@Override
-			public void closed(StreamProcessor processor) {
+			public void closed(StreamProcessor processor, boolean success) {
+				Assert.assertTrue(success);
 				Assert.assertFalse(errorHandler.isWarning());
 				Assert.assertFalse(errorHandler.isError());
 				Assert.assertFalse(errorHandler.isFatalError());
@@ -75,7 +76,7 @@ public class ValidationStreamProcessorFactoryTest {
 		
 		Assert.assertTrue(Arrays.equals(xml, bout.toByteArray()));
 
-		verify(spyCallback).closed(streamProcessor);
+		verify(spyCallback).closed(streamProcessor, true);
 		
 	}
 	
@@ -91,7 +92,7 @@ public class ValidationStreamProcessorFactoryTest {
 		DelegateStreamCallback callback = new DelegateStreamCallback() {
 			
 			@Override
-			public void closed(StreamProcessor processor) {
+			public void closed(StreamProcessor processor, boolean success) {
 				Assert.assertFalse(errorHandler.isWarning());
 				Assert.assertTrue(errorHandler.isError());
 				Assert.assertFalse(errorHandler.isFatalError());
@@ -116,7 +117,7 @@ public class ValidationStreamProcessorFactoryTest {
 		
 		Assert.assertTrue(Arrays.equals(xml, bout.toByteArray()));
 
-		verify(spyCallback).closed(streamProcessor);
+		verify(spyCallback).closed(streamProcessor, true);
 		
 	}
 

@@ -10,6 +10,8 @@ import org.junit.Test;
 
 import com.fasterxml.aalto.AsyncByteArrayFeeder;
 import com.fasterxml.aalto.AsyncXMLStreamReader;
+import com.github.skjolber.asyncstaxutils.filter.impl.MaxNodeLengthXmlStreamFilter;
+import com.github.skjolber.asyncstaxutils.filter.impl.XMLStreamWriterLengthEstimator;
 
 import junit.framework.Assert;
 

@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import com.github.skjolber.asyncstaxutils.filter.AbstractStreamTest;
 import com.github.skjolber.asyncstaxutils.filter.XMLStreamFilterFactory;
+import com.github.skjolber.asyncstaxutils.filter.impl.DefaultXMLStreamFilterFactory;
 import com.github.skjolber.asyncstaxutils.io.DelegateInputStream;
 import com.github.skjolber.asyncstaxutils.io.DelegateOutputStream;
 import com.github.skjolber.asyncstaxutils.io.DelegateStreamCallback;
@@ -34,12 +35,12 @@ public class AccumulatorStreamProcessorTest extends AbstractStreamTest {
 		final int maxCDATANodeLength = 10;
 
 		DelegateStreamCallback callback = new DelegateStreamCallback() {
-			public void closed(StreamProcessor processor) {
+			public void closed(StreamProcessor processor, boolean succcess) {
 				assertWithin(writer.toString(), maxTextNodeLength, maxCDATANodeLength, maxDocumentLength);
 			}
 		};
 		
-		XMLStreamFilterFactory xmlStreamFilterFactory = new XMLStreamFilterFactory();
+		DefaultXMLStreamFilterFactory xmlStreamFilterFactory = new DefaultXMLStreamFilterFactory();
 		xmlStreamFilterFactory.setMaxDocumentLength(maxDocumentLength);
 		xmlStreamFilterFactory.setMaxCDATANodeLength(maxCDATANodeLength);
 		xmlStreamFilterFactory.setMaxTextNodeLength(maxTextNodeLength);
@@ -85,12 +86,12 @@ public class AccumulatorStreamProcessorTest extends AbstractStreamTest {
 		final int maxCDATANodeLength = 10;
 
 		DelegateStreamCallback callback = new DelegateStreamCallback() {
-			public void closed(StreamProcessor processor) {
+			public void closed(StreamProcessor processor, boolean success) {
 				assertWithin(writer.toString(), maxTextNodeLength, maxCDATANodeLength, maxDocumentLength);
 			}
 		};
 		
-		XMLStreamFilterFactory xmlStreamFilterFactory = new XMLStreamFilterFactory();
+		DefaultXMLStreamFilterFactory xmlStreamFilterFactory = new DefaultXMLStreamFilterFactory();
 		xmlStreamFilterFactory.setMaxDocumentLength(maxDocumentLength);
 		xmlStreamFilterFactory.setMaxCDATANodeLength(maxCDATANodeLength);
 		xmlStreamFilterFactory.setMaxTextNodeLength(maxTextNodeLength);

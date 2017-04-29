@@ -79,7 +79,7 @@ public class DefaultStreamProcessorFactory implements StreamProcessorFactory {
 			
 			factory.createInstance().filter(reader, writer);
 		} catch (XMLStreamException e) {
-			logger.warn("Problem parsing XML payload", e);
+			logger.warn("Problem filtering XML payload", e);
 			if(writer != null) {
 				try {
 					writer.writeComment(" FILTER END - PARSE ERROR ");
@@ -91,10 +91,12 @@ public class DefaultStreamProcessorFactory implements StreamProcessorFactory {
 			try {
 				if(reader != null) reader.close();
 			} catch (XMLStreamException e) {
+				logger.debug("Problem closing reader", e);
 			}
 			try {
 				if(writer != null) writer.close();
 			} catch (XMLStreamException e) {
+				logger.debug("Problem closing writer", e);
 			}
 		}
 

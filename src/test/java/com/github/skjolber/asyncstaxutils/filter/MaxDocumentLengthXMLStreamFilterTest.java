@@ -11,6 +11,9 @@ import org.junit.Test;
 
 import com.fasterxml.aalto.AsyncByteArrayFeeder;
 import com.fasterxml.aalto.AsyncXMLStreamReader;
+import com.github.skjolber.asyncstaxutils.filter.impl.MaxDocumentLengthXMLStreamFilter;
+import com.github.skjolber.asyncstaxutils.filter.impl.MaxNodeLengthXmlStreamFilter;
+import com.github.skjolber.asyncstaxutils.filter.impl.XMLStreamWriterLengthEstimator;
 
 public class MaxDocumentLengthXMLStreamFilterTest extends AbstractStreamTest {
 

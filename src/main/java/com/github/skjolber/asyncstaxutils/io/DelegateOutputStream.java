@@ -28,7 +28,8 @@ public class DelegateOutputStream extends OutputStream {
 	private StreamProcessor listener;
 	private boolean closed = false;
 	private byte[] oneByte = new byte[1];
-	private DelegateStreamCallback callback;
+	private DelegateStreamCallback callback;	
+	private boolean exception = false;
 
 	public DelegateOutputStream(OutputStream out, StreamProcessor listener, DelegateStreamCallback callback) {
 		super();
@@ -39,17 +40,29 @@ public class DelegateOutputStream extends OutputStream {
 
 	@Override
 	public void write(byte[] b, int off, int len) throws IOException {
-		listener.payload(b, off, len);
-		
-		out.write(b, off, len);
+		try {
+			listener.payload(b, off, len);
+			
+			out.write(b, off, len);
+		} catch(IOException | RuntimeException e) {
+			exception = true;
+			
+			throw e;
+		}
 	}
 	
 	@Override
 	public void write(int b) throws IOException {
-		oneByte[0] = (byte)(b & 0xFF);
-		listener.payload(oneByte, 0, 1);
-		
-		out.write(b);
+		try {
+			oneByte[0] = (byte)(b & 0xFF);
+			listener.payload(oneByte, 0, 1);
+
+			out.write(b);
+		} catch(IOException | RuntimeException e) {
+			exception = true;
+			
+			throw e;
+		}
 	}
 	
 	@Override
@@ -59,14 +72,14 @@ public class DelegateOutputStream extends OutputStream {
 			
 			try {
 				listener.close();
-			} finally {
-				try {
-					out.close();
-				} catch(Exception e) {
-					// ignore
-				}
 				
-				callback.closed(listener);
+				out.close();
+			} catch(IOException | RuntimeException e) {
+				exception = true;
+				
+				throw e;
+			} finally {
+				callback.closed(listener, !exception);
 			}
 		}
 		

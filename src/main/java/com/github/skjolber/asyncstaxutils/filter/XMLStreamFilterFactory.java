@@ -17,69 +17,8 @@
 
 package com.github.skjolber.asyncstaxutils.filter;
 
-public class XMLStreamFilterFactory {
+public interface XMLStreamFilterFactory {
 
-	public static XMLStreamFilterFactory newInstance() {
-		return new XMLStreamFilterFactory();
-	}
-
-	protected boolean declaration;
-	protected int maxDocumentLength = -1;
-	protected int maxTextNodeLength = -1; // not always in use, if so set to max int
-	protected int maxCDATANodeLength = -1;  // not always in use, if so set to max int
-
-	private XMLStreamWriterLengthEstimator estimator = new XMLStreamWriterLengthEstimator();
-	
-	public XMLStreamFilter createInstance() {
-		XMLStreamFilter filter;
-		if(maxCDATANodeLength != -1 || maxTextNodeLength != -1) {
-			filter = new MaxNodeLengthXmlStreamFilter(declaration, maxTextNodeLength, maxCDATANodeLength, maxDocumentLength, estimator);
-		} else if(maxDocumentLength != -1) {
-			filter = new MaxDocumentLengthXMLStreamFilter(declaration, maxDocumentLength, estimator);
-		} else {
-			filter = new DefaultXMLStreamFilter(declaration);
-		}
-		return filter;
-	}
-
-	public boolean isDeclaration() {
-		return declaration;
-	}
-
-	public void setDeclaration(boolean declaration) {
-		this.declaration = declaration;
-	}
-
-	public int getMaxDocumentLength() {
-		return maxDocumentLength;
-	}
-
-	public void setMaxDocumentLength(int maxDocumentLength) {
-		this.maxDocumentLength = maxDocumentLength;
-	}
-
-	public int getMaxTextNodeLength() {
-		return maxTextNodeLength;
-	}
-
-	public void setMaxTextNodeLength(int maxTextNodeLength) {
-		this.maxTextNodeLength = maxTextNodeLength;
-	}
-
-	public int getMaxCDATANodeLength() {
-		return maxCDATANodeLength;
-	}
-
-	public void setMaxCDATANodeLength(int maxCDATANodeLength) {
-		this.maxCDATANodeLength = maxCDATANodeLength;
-	}
-
-	public XMLStreamWriterLengthEstimator getEstimator() {
-		return estimator;
-	}
-
-	public void setEstimator(XMLStreamWriterLengthEstimator estimator) {
-		this.estimator = estimator;
-	}
+	XMLStreamFilter createInstance();
 	
 }

@@ -22,6 +22,13 @@ import java.io.InputStream;
 
 import com.github.skjolber.asyncstaxutils.StreamProcessor;
 
+/**
+ * 
+ * Delegate for inputstream. Keeps track of underlying stream state and optionally reads the 
+ * remaining stream content on {@linkplain InputStream#close()}.
+ *
+ */
+
 public class DelegateInputStream extends InputStream {
 
 	private InputStream in;
@@ -29,71 +36,88 @@ public class DelegateInputStream extends InputStream {
 	private boolean closed = false;
 	private byte[] oneByte = new byte[1];
 	private DelegateStreamCallback callback;
-	
-	public DelegateInputStream(InputStream in, StreamProcessor listener, DelegateStreamCallback callback) {
+
+	private boolean exception = false;
+	private boolean delegateOnClose;
+
+	public DelegateInputStream(InputStream in, StreamProcessor listener, DelegateStreamCallback callback, boolean delegateOnClose) {
 		this.in = in;
 		this.listener = listener;
 		this.callback = callback;
+		this.delegateOnClose = delegateOnClose;
+	}
+
+	public DelegateInputStream(InputStream in, StreamProcessor listener, DelegateStreamCallback callback) {
+		this(in, listener, callback, false);
 	}
 
 	@Override
 	public int read(byte[] b, int off, int len) throws IOException {
-		int read = in.read(b, off, len);
-		if(read != -1) {
-			listener.payload(b, off, read);
-		} else {
-			closed = true;
+		try {
+			int read = in.read(b, off, len);
+			if(read != -1) {
+				listener.payload(b, off, read);
+				
+				return read;
+			}
+		} catch(IOException | RuntimeException e) {
+			exception = true;
 			
-			shutdown();
+			throw e;
 		}
-		return read;
+		delegateOnClose = false;
+		
+		return -1;
 	}
 	
 	@Override
 	public int read() throws IOException {
-		int read = in.read();
-		if(read != -1) {
-			oneByte[0] = (byte)(read & 0xFF);
-			listener.payload(oneByte, 0 ,1);
-		} else {
-			closed = true;
+		try {
+			int read = in.read();
+			if(read != -1) {
+				oneByte[0] = (byte)(read & 0xFF);
+				listener.payload(oneByte, 0 ,1);
+				
+				return read;
+			}
+		} catch(IOException | RuntimeException e) {
+			exception = true;
 			
-			shutdown();
+			throw e;
 		}
+		delegateOnClose = false;
 		
-		return read;
+		return -1;
 	}
 
 	public void close() throws IOException {
 		if(!closed) {
-			closed = true;
 			try {
-				// write the rest
-				byte[] buffer = new byte[16 * 1024];
-				int read;
-				do {
-					read = in.read(buffer, 0, buffer.length);
-					if(read == -1) {
-						break;
-					}
-					listener.payload(buffer, 0, read);
-				} while(true);
-				
+				if(delegateOnClose && !exception) {
+					// read/delegate the rest
+					byte[] buffer = new byte[16 * 1024];
+					while(read(buffer, 0, buffer.length) != -1);
+				}
 			} finally {
 				shutdown();
 			}
 		}
 	}
 
-	private void shutdown() {
+	private void shutdown() throws IOException {
+		closed = true;
+		
 		listener.close();
 		
 		try {
 			in.close();
-		} catch(Exception e) {
-			// ignore
+		} catch(IOException | RuntimeException e) {
+			exception = true;
+			
+			throw e;			
+		} finally {
+			callback.closed(listener, !exception);
 		}
 		
-		callback.closed(listener);
 	}
 }

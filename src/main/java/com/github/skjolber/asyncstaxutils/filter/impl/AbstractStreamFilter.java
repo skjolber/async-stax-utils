@@ -14,12 +14,14 @@
  * limitations under the License.
  * 
  */
-package com.github.skjolber.asyncstaxutils.filter;
+package com.github.skjolber.asyncstaxutils.filter.impl;
 
 import javax.xml.stream.XMLStreamException;
 
 import org.codehaus.stax2.XMLStreamReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
+
+import com.github.skjolber.asyncstaxutils.filter.XMLStreamFilter;
 
 public abstract class AbstractStreamFilter implements XMLStreamFilter {
 

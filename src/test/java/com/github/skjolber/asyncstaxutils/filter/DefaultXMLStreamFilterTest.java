@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import com.fasterxml.aalto.AsyncByteArrayFeeder;
 import com.fasterxml.aalto.AsyncXMLStreamReader;
+import com.github.skjolber.asyncstaxutils.filter.impl.DefaultXMLStreamFilter;
 
 public class DefaultXMLStreamFilterTest extends AbstractStreamTest {
 
