@@ -14,25 +14,21 @@
  * limitations under the License.
  * 
  */
-package com.github.skjolber.asyncstaxutils.filter.impl;
+package com.github.skjolber.asyncstaxutils.filter;
 
 import javax.xml.stream.XMLStreamException;
 
 import org.codehaus.stax2.XMLStreamReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
-import com.github.skjolber.asyncstaxutils.filter.XMLStreamFilter;
+public abstract class AbstractXmlStreamFilter implements XMLStreamFilter {
 
-public abstract class AbstractStreamFilter implements XMLStreamFilter {
+	public static final String FILTER_TRUNCATE_MESSAGE = "...TRUNCATED BY ";
+	public static final String FILTER_END_MESSAGE = " FILTERED ";
 
 	protected final boolean declaration;
 
-	protected StringBuffer characters = new StringBuffer(1024);
-	protected int characterType = 0;
-	protected boolean ignoreCharacters = false;
-	protected int ignoredCharacters = 0;
-	
-	public AbstractStreamFilter(boolean declaration) {
+	public AbstractXmlStreamFilter(boolean declaration) {
 		this.declaration = declaration;
 	}
 	
@@ -85,26 +81,4 @@ public abstract class AbstractStreamFilter implements XMLStreamFilter {
 
 	public abstract void filter(XMLStreamReader2 reader, XMLStreamWriter2 writer) throws XMLStreamException;
 
-	public void reset() {
-		characters.setLength(0);
-		characterType = 0;
-		ignoreCharacters = false;
-		ignoredCharacters = 0;
-	}
-	
-	public String getCharacters() {
-		return characters.toString();
-	}
-	
-	public void append(String text) {
-		this.characters.append(text);
-	}
-	
-	public void append(char[] text, int offset, int length) {
-		this.characters.append(text, offset, length);
-	}
-
-	public int length() {
-		return characters.length();
-	}
 }

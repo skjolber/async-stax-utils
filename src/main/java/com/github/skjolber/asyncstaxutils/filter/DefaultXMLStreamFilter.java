@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  */
-package com.github.skjolber.asyncstaxutils.filter.impl;
+package com.github.skjolber.asyncstaxutils.filter;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -24,7 +24,7 @@ import org.codehaus.stax2.XMLStreamWriter2;
 
 import com.fasterxml.aalto.AsyncXMLStreamReader;
 
-public class DefaultXMLStreamFilter extends AbstractStreamFilter {
+public class DefaultXMLStreamFilter extends AbstractXmlStreamFilter {
 
 	public DefaultXMLStreamFilter(boolean declaration) {
 		super(declaration);

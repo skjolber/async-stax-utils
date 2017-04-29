@@ -17,120 +17,78 @@
 
 package com.github.skjolber.asyncstaxutils.filter.impl;
 
+import java.io.IOException;
+
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.stax2.XMLStreamReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import com.fasterxml.aalto.AsyncXMLStreamReader;
+import com.github.skjolber.asyncstaxutils.filter.AbstractXmlStreamFilter;
 
-public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
-
-	public static final String FILTER_END_MESSAGE = " FILTERED ";
+public class MaxDocumentLengthXMLStreamFilter extends AbstractXmlStreamFilter {
 	
-	protected final int maxDocumentLength;
-	protected final XMLStreamWriterLengthEstimator calculator;
-
+	protected final XMLStreamEventFilterWriter eventSizeFilter;
+	
 	protected int count = 0;
-
-	public MaxDocumentLengthXMLStreamFilter(boolean declaration, int maxDocumentLength, XMLStreamWriterLengthEstimator calculator) {
+	
+	public MaxDocumentLengthXMLStreamFilter(boolean declaration, XMLStreamEventFilterWriter calculator) {
 		super(declaration);
-		if(maxDocumentLength == -1) {
-			this.maxDocumentLength = Integer.MAX_VALUE;
-		} else {
-			this.maxDocumentLength = maxDocumentLength;
+		this.eventSizeFilter = calculator;
+	}
+	
+	public static int elementSize(XMLStreamReader2 reader) throws XMLStreamException {
+		String localName = reader.getLocalName();
+		int count = "</>".length(); // wrapper end elements
+		
+		String prefix = reader.getPrefix();
+		if(!isEmpty(prefix)) {
+			count += (prefix.length() + 1);
 		}
-		this.calculator = calculator;
+		return count + localName.length();
 	}
 	
 	public void filter(XMLStreamReader2 reader, XMLStreamWriter2 writer) throws XMLStreamException {
 		while(reader.hasNext()) {
 			int event = reader.next();
-			
-			if(characterType != 0 && event != characterType && event != AsyncXMLStreamReader.EVENT_INCOMPLETE) {
-				if(!handleCharacterState(writer)) {
-					
-					return;
-				}
-				reset();		
-			}
 
 			switch (event) {
 			case XMLStreamConstants.START_ELEMENT: {
 
-				int count = calculator.startElement(reader) + calculator.attributes(reader);
-
-				if(this.count + count > maxDocumentLength) {
-					writer.writeComment(FILTER_END_MESSAGE);
-					
-					return;
-				}
-
-				increment(count);
+				count += elementSize(reader);
 
 				writeStartElement(reader, writer);
 				writeAttributes(reader, writer);
-					
+				
+				// TODO close start element in a better way
+				writer.writeCharacters("");
 				break;
 			}
 			case XMLStreamConstants.END_ELEMENT:
+				count -= elementSize(reader);
+				
 				writer.writeFullEndElement();
 				break;
 			case XMLStreamConstants.CHARACTERS: {
-				
-				append(reader.getTextCharacters(), reader.getTextStart(), reader.getTextLength());
-				characterType = XMLStreamConstants.CHARACTERS;
-
-				if(this.count + length() > maxDocumentLength) {
-					writer.writeComment(FILTER_END_MESSAGE);
-					
-					return;
-				}
+				writer.writeCharacters(reader.getTextCharacters(), reader.getTextStart(), reader.getTextLength());
 			}
 			break;
 			case XMLStreamConstants.COMMENT: {
-				int count = calculator.comment(reader);
-
-				if(this.count + count > maxDocumentLength) {
-					writer.writeComment(FILTER_END_MESSAGE);
-					
-					return;
-				}
-
-				increment(count);
-
 				writer.writeComment(reader.getText());
 
 				break;
 			}
 			case XMLStreamConstants.CDATA: {
-				append(reader.getTextCharacters(), reader.getTextStart(), reader.getTextLength());
-				characterType = XMLStreamConstants.CDATA;
-
-				if(this.count + 12 + length() > maxDocumentLength) {
-					writer.writeComment(FILTER_END_MESSAGE);
-					
-					return;
-				}
-
+				writer.writeCData(reader.getTextCharacters(), reader.getTextStart(), reader.getTextLength());
+				
 				break;
 			}
 			case XMLStreamConstants.START_DOCUMENT: {
 				// does not support 'standalone', but noone uses it
 				if(declaration) {
 					if (!isEmpty(reader.getVersion())) {
-						int count = calculator.xmlDeclaration(reader);
-						
-						if(this.count + count > maxDocumentLength) {
-							writer.writeComment(FILTER_END_MESSAGE);
-							
-							return;
-						}
-	
-						increment(count);
-	
 						writer.writeStartDocument(reader.getCharacterEncodingScheme(), reader.getVersion());
 					}
 				}
@@ -141,16 +99,6 @@ public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 				
 				return;
 			case XMLStreamConstants.PROCESSING_INSTRUCTION: {
-				int count = calculator.processingInstruction(reader);
-
-				if(this.count + count > maxDocumentLength) {
-					writer.writeComment(FILTER_END_MESSAGE);
-					
-					return;
-				}
-
-				increment(count);
-
 				writer.writeProcessingInstruction(reader.getPITarget(), reader.getPIData());
 
 				break;
@@ -162,51 +110,25 @@ public class MaxDocumentLengthXMLStreamFilter extends AbstractStreamFilter {
 				throw new IllegalArgumentException("Unsupported event " + event);
 			}
 
+			writer.flush();
+			if(!eventSizeFilter.accept(count)) {
+				if(event == XMLStreamConstants.START_ELEMENT) {
+					// this start element was too long in combination with end element
+					writer.writeEndElement();
+				}
+				eventSizeFilter.clear();
+				
+				writer.writeComment(FILTER_END_MESSAGE);
+				
+				return;
+			} else {
+				try {
+					eventSizeFilter.forward();
+				} catch (IOException e) {
+					throw new XMLStreamException(e);
+				}
+			}
 		}	
-	}
-
-	protected boolean handleCharacterState(XMLStreamWriter writer) throws XMLStreamException {
-		if(length() == 0) {
-			return true;
-		}
-		String s = getCharacters().toString();
-		
-		if(characterType == XMLStreamConstants.CHARACTERS) {
-			int count = calculator.countEncoded(s);
-
-			if(count + count > maxDocumentLength) {
-				writer.writeComment(FILTER_END_MESSAGE);
-				
-				return false;
-			}
-
-			increment(count);
-
-			writer.writeCharacters(s);
-		} else if(characterType == XMLStreamConstants.CDATA) {
-			int count = s.length() + 12;
-
-			if(count + count > maxDocumentLength) {
-				writer.writeComment(FILTER_END_MESSAGE);
-				
-				return false;
-			}
-
-			increment(count);
-
-			writer.writeCData(s);
-		}
-
-		return true;
-	}
-
-
-	public int getLimit() {
-		return maxDocumentLength;
-	}
-
-	public void increment(int count) {
-		this.count += count;
 	}
 
 }

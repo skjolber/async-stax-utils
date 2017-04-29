@@ -11,9 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.skjolber.asyncstaxutils.filter.AbstractStreamTest;
-import com.github.skjolber.asyncstaxutils.filter.XMLStreamFilterFactory;
-import com.github.skjolber.asyncstaxutils.filter.impl.DefaultXMLStreamFilterFactory;
+import com.github.skjolber.asyncstaxutils.filter.impl.MaxNodeLengthStreamProcessorFactory;
 import com.github.skjolber.asyncstaxutils.io.DelegateInputStream;
 import com.github.skjolber.asyncstaxutils.io.DelegateOutputStream;
 import com.github.skjolber.asyncstaxutils.io.DelegateStreamCallback;
@@ -40,14 +38,12 @@ public class AccumulatorStreamProcessorTest extends AbstractStreamTest {
 			}
 		};
 		
-		DefaultXMLStreamFilterFactory xmlStreamFilterFactory = new DefaultXMLStreamFilterFactory();
+		MaxNodeLengthStreamProcessorFactory xmlStreamFilterFactory = new MaxNodeLengthStreamProcessorFactory();
 		xmlStreamFilterFactory.setMaxDocumentLength(maxDocumentLength);
 		xmlStreamFilterFactory.setMaxCDATANodeLength(maxCDATANodeLength);
 		xmlStreamFilterFactory.setMaxTextNodeLength(maxTextNodeLength);
 		
-		StreamProcessorFactory factory = new DefaultStreamProcessorFactory(xmlStreamFilterFactory);
-		
-		StreamProcessor streamProcessor = new AccumulatorStreamProcessor(limitBytes, factory, writer);
+		StreamProcessor streamProcessor = new AccumulatorStreamProcessor(limitBytes, xmlStreamFilterFactory, writer);
 		DelegateOutputStream out = new DelegateOutputStream(bout, streamProcessor, callback);
 		
 		int offset = 0;
@@ -91,14 +87,12 @@ public class AccumulatorStreamProcessorTest extends AbstractStreamTest {
 			}
 		};
 		
-		DefaultXMLStreamFilterFactory xmlStreamFilterFactory = new DefaultXMLStreamFilterFactory();
+		MaxNodeLengthStreamProcessorFactory xmlStreamFilterFactory = new MaxNodeLengthStreamProcessorFactory();
 		xmlStreamFilterFactory.setMaxDocumentLength(maxDocumentLength);
 		xmlStreamFilterFactory.setMaxCDATANodeLength(maxCDATANodeLength);
 		xmlStreamFilterFactory.setMaxTextNodeLength(maxTextNodeLength);
-		
-		StreamProcessorFactory factory = new DefaultStreamProcessorFactory(xmlStreamFilterFactory);
-		
-		StreamProcessor streamProcessor = new AccumulatorStreamProcessor(limitBytes, factory, writer);
+
+		StreamProcessor streamProcessor = new AccumulatorStreamProcessor(limitBytes, xmlStreamFilterFactory, writer);
 		DelegateInputStream out = new DelegateInputStream(bout, streamProcessor, callback);
 		
 		byte[] byteArray = IOUtils.toByteArray(out);

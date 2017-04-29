@@ -18,7 +18,6 @@
 package com.github.skjolber.asyncstaxutils;
 
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.slf4j.Logger;

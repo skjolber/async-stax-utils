@@ -13,7 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.skjolber.asyncstaxutils.filter.AbstractStreamTest;
+import com.github.skjolber.asyncstaxutils.AbstractStreamTest;
 
 public class DelegateInputStreamTest extends AbstractStreamTest {
 

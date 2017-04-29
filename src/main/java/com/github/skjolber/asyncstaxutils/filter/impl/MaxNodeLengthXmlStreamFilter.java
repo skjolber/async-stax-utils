@@ -25,16 +25,47 @@ import org.codehaus.stax2.XMLStreamReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import com.fasterxml.aalto.AsyncXMLStreamReader;
+import com.github.skjolber.asyncstaxutils.filter.AbstractXmlStreamFilter;
 
-public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilter {
-	
-	public static final String FILTER_TRUNCATE_MESSAGE = "...TRUNCATED BY ";
-	
+public class MaxNodeLengthXmlStreamFilter extends AbstractXmlStreamFilter {
+		
 	protected final int maxTextNodeLength; // not always in use, if so set to max int
 	protected final int maxCDATANodeLength;  // not always in use, if so set to max int
+	protected final int maxDocumentLength;
 
-	public MaxNodeLengthXmlStreamFilter(boolean declaration, int maxTextNodeLength, int maxCDATANodeLength, int maxDocumentLength, XMLStreamWriterLengthEstimator calculator) {
-		super(declaration, maxDocumentLength, calculator);
+	protected StringBuffer characters = new StringBuffer(1024);
+	protected int characterType = 0;
+	protected boolean ignoreCharacters = false;
+	protected int ignoredCharacters = 0;
+	
+	private final XMLStreamWriterLengthEstimator estimator;
+	protected int count = 0;
+	
+	public void reset() {
+		characters.setLength(0);
+		characterType = 0;
+		ignoreCharacters = false;
+		ignoredCharacters = 0;
+	}
+	
+	public String getCharacters() {
+		return characters.toString();
+	}
+	
+	public void append(String text) {
+		this.characters.append(text);
+	}
+	
+	public void append(char[] text, int offset, int length) {
+		this.characters.append(text, offset, length);
+	}
+
+	public int length() {
+		return characters.length();
+	}
+	
+	public MaxNodeLengthXmlStreamFilter(boolean declaration, int maxTextNodeLength, int maxCDATANodeLength, int maxDocumentLength, XMLStreamWriterLengthEstimator estimator) {
+		super(declaration);
 		
 		if(maxTextNodeLength < -1) {
 			throw new IllegalArgumentException();
@@ -53,10 +84,10 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 		} else {
 			this.maxCDATANodeLength = maxCDATANodeLength;
 		}
-	}
-	
-	public boolean getXmlDeclaration() {
-		return declaration;
+
+		this.maxDocumentLength = maxDocumentLength;
+		
+		this.estimator = estimator;
 	}
 	
 	public int getMaxCDATANodeLength() {
@@ -95,9 +126,9 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 	 * 
 	 * Find effective length (as code points, logical letters).
 	 * 
-	 * @param chars
-	 * @param offset
-	 * @param limit
+	 * @param chars target buffer
+	 * @param offset target buffer offset
+	 * @param limit target buffer limit (offset + length)
 	 * @param codePointCount desired code point count
 	 * @return effective number of characters given the constraints
 	 */
@@ -129,7 +160,7 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 			switch (event) {
 			case XMLStreamConstants.START_ELEMENT: {
 
-				int count = calculator.startElement(reader) + calculator.attributes(reader);
+				int count = estimator.startElement(reader) + estimator.attributes(reader);
 
 				if(this.count + count > maxDocumentLength) {
 					writer.writeComment(FILTER_END_MESSAGE);
@@ -168,7 +199,7 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 			}
 			break;
 			case XMLStreamConstants.COMMENT: {
-				int count = calculator.comment(reader);
+				int count = estimator.comment(reader);
 
 				if(this.count + count > maxDocumentLength) {
 					writer.writeComment(FILTER_END_MESSAGE);
@@ -207,7 +238,7 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 				// does not support 'standalone', but noone uses it
 				if(declaration) {
 					if (!isEmpty(reader.getVersion())) {
-						int count = calculator.xmlDeclaration(reader);
+						int count = estimator.xmlDeclaration(reader);
 						if(this.count + count > maxDocumentLength) {
 							writer.writeComment(FILTER_END_MESSAGE);
 							
@@ -224,7 +255,7 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 				writer.writeEndDocument();
 				break;
 			case XMLStreamConstants.PROCESSING_INSTRUCTION: {
-				int count = calculator.processingInstruction(reader);
+				int count = estimator.processingInstruction(reader);
 
 				if(this.count + count > maxDocumentLength) {
 					writer.writeComment(FILTER_END_MESSAGE);
@@ -275,7 +306,7 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 			}
 			
 
-			int count = calculator.countEncoded(s);
+			int count = estimator.countEncoded(s);
 
 			if(this.count + count > maxDocumentLength) {
 				writer.writeComment(FILTER_END_MESSAGE);
@@ -291,7 +322,7 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 				int findMaxTextNodeLength = findCodePointLength(s, maxCDATANodeLength);
 				if(s.length() > findMaxTextNodeLength || ignoredCharacters > 0) {
 					
-					int count = 12 + s.length() - (s.length() - findMaxTextNodeLength) + FILTER_TRUNCATE_MESSAGE.length() + + number(s.length() - findMaxTextNodeLength + ignoredCharacters);
+					int count = 12 + s.length() - (s.length() - findMaxTextNodeLength) + FILTER_TRUNCATE_MESSAGE.length() + number(s.length() - findMaxTextNodeLength + ignoredCharacters);
 
 					if(this.count + count > maxDocumentLength) {
 						writer.writeComment(FILTER_END_MESSAGE);
@@ -322,8 +353,14 @@ public class MaxNodeLengthXmlStreamFilter extends MaxDocumentLengthXMLStreamFilt
 		return true;
 	}
 
-	private int number(int i) {
-		return 0;
+	public void increment(int count) {
+		this.count += count;
 	}
 	
+	private int number(int n) {
+		if(n <= 0) {
+			return 1;
+		}
+		return (int)(Math.log10(n)+1);
+	}
 }

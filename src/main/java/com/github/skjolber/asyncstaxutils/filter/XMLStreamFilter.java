@@ -27,7 +27,7 @@ import com.fasterxml.aalto.AsyncXMLStreamReader;
 public interface XMLStreamFilter {
 
 	/**
-	 * Filter XML streams. If the reader event type is not left at {@linkplain AsyncXMLStreamReader.EVENT_INCOMPLETE}, 
+	 * Filter XML streams. If the reader event type is not left at {@linkplain AsyncXMLStreamReader#EVENT_INCOMPLETE}, 
 	 * it is assumed that no more filtering is necessary.
 	 * @param reader input
 	 * @param writer output 

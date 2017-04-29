@@ -25,7 +25,7 @@ Example dependency config:
 <dependency>
 	<groupId>com.github.skjolber</groupId>
 	<artifactId>async-stax-utils</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 </dependency>
 ```
 
@@ -37,7 +37,7 @@ Wire up an instance of `StreamProcessor`. Then create a callback,
 
 ```java
 DelegateStreamCallback callback = new DelegateStreamCallback() {
-	public void closed(StreamProcessor processor) {
+	public void closed(StreamProcessor processor, boolean success) {
 		System.out.println("Stream closed");
 	}
 };
@@ -63,36 +63,11 @@ Filtering is performed via the `XMLStreamFilter` interface, which consists of a 
 void filter(XMLStreamReader2 reader, XMLStreamWriter2 writer) throws XMLStreamException;
 ```
 
-### XMLStreamFilterFactory
-This factory class supports 4 parameters,
-
-  * XML declaration
-  * Max length
-    * Document
-    * Text-node
-    * CDATA-node
-
-Limits are enforced in code points, i.e. readable characters.
-
-```java
-XMLStreamFilterFactory xmlStreamFilterFactory = new XMLStreamFilterFactory();
-
-// configure limits
-xmlStreamFilterFactory.setMaxDocumentSize(maxDocumentSize);
-xmlStreamFilterFactory.setMaxCDATANodeLength(maxCDATANodeLength);
-xmlStreamFilterFactory.setMaxTextNodeLength(maxTextNodeLength);
-
-// create filter
-XMLStreamFilter filter = xmlStreamFilterFactory.createInstance();
-```
-
-The resulting filter is usually for one-time use, as it keeps track of state.
-
 ### StreamProcessorFactory
 Tying streams and filters together, `StreamProcessorFactory` takes a `Writer`, used to store the filtered result, and returns a `StreamProcessor`.
 
 ```java
-StreamProcessorFactory streamProcessorFactory = new DefaultStreamProcessorFactory(xmlStreamFilterFactory);
+StreamProcessorFactory streamProcessorFactory = ...; // init
 final Writer output = new StringWriter(8 * 1024); // for use in callback
 StreamProcessor streamProcessor = factory.async(output);
 ```
@@ -103,15 +78,12 @@ The resulting `StreamProcessor` be passed to the constructors of `DelegateOutput
 This processor tries to cache some data, and filter using a synchronous parser if possible. This avoids the overhead the asynchronous parser for documents of limited size. Create a factory
 
 ```java
-XMLStreamFilterFactory xmlStreamFilterFactory = XMLStreamFilterFactory.newInstance();
+MaxNodeLengthStreamProcessorFactory xmlStreamFilterFactory = new MaxNodeLengthStreamProcessorFactory();
 
 // configure limits (in char code points)
 xmlStreamFilterFactory.setMaxDocumentSize(maxDocumentSize);
 xmlStreamFilterFactory.setMaxCDATANodeLength(maxCDATANodeLength);
 xmlStreamFilterFactory.setMaxTextNodeLength(maxTextNodeLength);
-
-// pass on to stream processor factory
-StreamProcessorFactory factory = new AsyncStreamProcessorFactory(xmlStreamFilterFactory);
 ```
 
 determine the raw stream cache size,
@@ -122,7 +94,7 @@ int maxCacheLengthBytes = 1024;
 and add an output Writer and callback as above. Finally initialize with
 
 ```java
-StreamProcessor streamProcessor = new AccumulatorStreamProcessor(maxCacheLengthBytes, factory, output);
+StreamProcessor streamProcessor = new AccumulatorStreamProcessor(maxCacheLengthBytes, xmlStreamFilterFactory, output);
 ```
 
 and again pass this instance to the constructors of `DelegateOutputStream` or `DelegateInputStream`. 

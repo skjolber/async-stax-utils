@@ -1,4 +1,4 @@
-package com.github.skjolber.asyncstaxutils.filter;
+package com.github.skjolber.asyncstaxutils;
 
 import java.io.StringReader;
 

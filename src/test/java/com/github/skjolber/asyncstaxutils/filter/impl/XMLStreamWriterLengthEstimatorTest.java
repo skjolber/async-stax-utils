@@ -1,4 +1,4 @@
-package com.github.skjolber.asyncstaxutils.filter;
+package com.github.skjolber.asyncstaxutils.filter.impl;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
