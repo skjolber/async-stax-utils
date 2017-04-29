@@ -3,12 +3,12 @@
 # async-stax-utils
 This project hosts some simple utilities for dealing with XML streams in an asynchronous way. This is achieved through the use of the [Aalto-xml] asynchronous XML-parser.
 
-Users of this library will benefit from
+Currently the main focus is on 'passthrough' scenarios like validation and logging, in which the payload `InputStream`/`Outputstream` remains unaffected. Users of this library will benefit from
 
-  * Input- and Outputstream read-/write-delegates with end-of-stream callback
-  * XML filtering
-    * Max text- and CDATA-node length
-    * Max document length
+  * Passthrough Input- and Outputstream read-/write-delegates with end-of-stream callback
+  * Streaming XML processing
+    * Schema validation
+    * Max text/CDATA-node and document-length filtering
   * Synchronous processing with asynchronous fallback based on configurable cache size.
 
 Bugs, feature suggestions and help requests can be filed with the [issue-tracker].
@@ -75,29 +75,29 @@ StreamProcessor streamProcessor = factory.async(output);
 The resulting `StreamProcessor` be passed to the constructors of `DelegateOutputStream` or `DelegateInputStream`. 
 
 ### AccumulatorStreamProcessor
-This processor tries to cache some data, and filter using a synchronous parser if possible. This avoids the overhead the asynchronous parser for documents of limited size. Create a factory
-
-```java
-MaxNodeLengthStreamProcessorFactory xmlStreamFilterFactory = new MaxNodeLengthStreamProcessorFactory();
-
-// configure limits (in char code points)
-xmlStreamFilterFactory.setMaxDocumentSize(maxDocumentSize);
-xmlStreamFilterFactory.setMaxCDATANodeLength(maxCDATANodeLength);
-xmlStreamFilterFactory.setMaxTextNodeLength(maxTextNodeLength);
-```
-
-determine the raw stream cache size,
+This processor tries to cache some data, and filter using a synchronous parser if possible. This avoids the overhead the asynchronous parser for documents of limited size. Take a factory `StreamProcessorFactory`, determine the raw stream cache size,
 
 ```java
 int maxCacheLengthBytes = 1024;
 ```
-and add an output Writer and callback as above. Finally initialize with
+construct the `AccumulatorStreamProcessor` using 
 
 ```java
 StreamProcessor streamProcessor = new AccumulatorStreamProcessor(maxCacheLengthBytes, xmlStreamFilterFactory, output);
 ```
 
-and again pass this instance to the constructors of `DelegateOutputStream` or `DelegateInputStream`. 
+finally make the delegate input
+
+```java
+DelegateInputStream dis = new DelegateInputStream(bin, streamProcessor, callback);
+```
+or output
+
+```java
+DelegateOutputStream dis = new DelegateOutputStream(bin, listener, callback);
+```
+
+streams and pass them up or down your pipe.
 
 # History
 - [1.0.0]: Initial release.

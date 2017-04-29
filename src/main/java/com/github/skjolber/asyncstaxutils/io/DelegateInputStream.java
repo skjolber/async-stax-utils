@@ -24,8 +24,10 @@ import com.github.skjolber.asyncstaxutils.StreamProcessor;
 
 /**
  * 
- * Delegate for inputstream. Keeps track of underlying stream state and optionally reads the 
- * remaining stream content on {@linkplain InputStream#close()}.
+ * Pass-through delegate for {@linkplain InputStream} which feeds stream content into a {@linkplain StreamProcessor}. 
+ * The purpose of this class is to be able to process content without filtering it. 
+ * 
+ * Keeps track of underlying stream state and optionally reads the remaining stream content on {@linkplain InputStream#close()}.
  *
  */
 
