@@ -3,10 +3,12 @@
 # async-stax-utils
 This project hosts some simple utilities for dealing with XML streams in an asynchronous way. This is achieved through the use of the [Aalto-xml] asynchronous XML-parser.
 
-Currently the main focus is on 'passthrough' scenarios like validation and logging, in which the payload `InputStream`/`Outputstream` remains unaffected. Users of this library will benefit from
+Currently the main focus is on 'easedropping' scenarios like validation, logging and analytics, where input/output-stream contents is unaffected for up/downstream peers.
+
+Users of this library will benefit from
 
   * Passthrough Input- and Outputstream read-/write-delegates with end-of-stream callback
-  * Streaming XML processing
+  * Streaming XML-processing
     * Schema validation
     * Max text/CDATA-node and document-length filtering
   * Synchronous processing with asynchronous fallback based on configurable cache size.
@@ -40,7 +42,7 @@ DelegateStreamCallback callback = new DelegateStreamCallback() {
 	public void closed(StreamProcessor processor, boolean success) {
 		System.out.println("Stream closed");
 	}
-};
+}
 ```
 for end-of-stream logic. Wrap `OutputStream` and/or `InputStream` instances using
 
