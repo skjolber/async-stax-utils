@@ -226,7 +226,11 @@
 
 	<profiles>
 		<profile>
-			<!-- mvn -P release release:perform -->
+			<!-- 
+				mvn -P release release:perform 
+				
+				http://central.sonatype.org/pages/releasing-the-deployment.html	
+			-->
 			<id>release</id>
 			<properties>
 				<!-- this is useful when the desired key is not the default (first)
