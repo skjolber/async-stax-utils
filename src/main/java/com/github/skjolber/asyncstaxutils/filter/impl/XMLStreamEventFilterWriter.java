@@ -70,7 +70,7 @@ public class XMLStreamEventFilterWriter extends Writer {
 	
 	@Override
 	public void flush() throws IOException {
-		delegate.close();
+		delegate.flush();
 	}
 	
 	public Writer getDelegate() {
