@@ -110,11 +110,12 @@ DelegateOutputStream dis = new DelegateOutputStream(bin, listener, callback);
 streams and pass them up or down your pipe.
 
 # History
-- [1.0.1]: Better document-size length filtering.
+- [1.0.2]: Better class names and packages, some some reuse of XML-related processors.
+- 1.0.1: Better document-size length filtering.
 - 1.0.0: Initial release.
 
 [Apache 2.0]:          	http://www.apache.org/licenses/LICENSE-2.0.html
 [Aalto-xml]:			https://github.com/FasterXML/aalto-xml
 [issue-tracker]:       	https://github.com/skjolber/async-stax-utils/issues
-[1.0.1]:                https://github.com/skjolber-async-stax-utils/releases
+[1.0.2]:                https://github.com/skjolber-async-stax-utils/releases
 [Maven]:                http://maven.apache.org/
