@@ -11,12 +11,13 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.skjolber.asyncstaxutils.filter.impl.MaxNodeLengthStreamProcessorFactory;
+import com.github.skjolber.asyncstaxutils.filter.AccumulatorStreamFilterProcessor;
+import com.github.skjolber.asyncstaxutils.filter.impl.MaxNodeLengthXMLStreamFilterProcessorFactory;
 import com.github.skjolber.asyncstaxutils.io.DelegateInputStream;
 import com.github.skjolber.asyncstaxutils.io.DelegateOutputStream;
 import com.github.skjolber.asyncstaxutils.io.DelegateStreamCallback;
 
-public class AccumulatorStreamProcessorTest extends AbstractStreamTest {
+public class AccumulatorStreamFilterProcessorTest extends AbstractStreamTest {
 
 	@Test
 	public void testWrite() throws IOException {
@@ -38,12 +39,12 @@ public class AccumulatorStreamProcessorTest extends AbstractStreamTest {
 			}
 		};
 		
-		MaxNodeLengthStreamProcessorFactory xmlStreamFilterFactory = new MaxNodeLengthStreamProcessorFactory();
+		MaxNodeLengthXMLStreamFilterProcessorFactory xmlStreamFilterFactory = new MaxNodeLengthXMLStreamFilterProcessorFactory();
 		xmlStreamFilterFactory.setMaxDocumentLength(maxDocumentLength);
 		xmlStreamFilterFactory.setMaxCDATANodeLength(maxCDATANodeLength);
 		xmlStreamFilterFactory.setMaxTextNodeLength(maxTextNodeLength);
 		
-		StreamProcessor streamProcessor = new AccumulatorStreamProcessor(limitBytes, xmlStreamFilterFactory, writer);
+		StreamProcessor streamProcessor = new AccumulatorStreamFilterProcessor(limitBytes, xmlStreamFilterFactory, writer);
 		DelegateOutputStream out = new DelegateOutputStream(bout, streamProcessor, callback);
 		
 		int offset = 0;
@@ -87,12 +88,12 @@ public class AccumulatorStreamProcessorTest extends AbstractStreamTest {
 			}
 		};
 		
-		MaxNodeLengthStreamProcessorFactory xmlStreamFilterFactory = new MaxNodeLengthStreamProcessorFactory();
+		MaxNodeLengthXMLStreamFilterProcessorFactory xmlStreamFilterFactory = new MaxNodeLengthXMLStreamFilterProcessorFactory();
 		xmlStreamFilterFactory.setMaxDocumentLength(maxDocumentLength);
 		xmlStreamFilterFactory.setMaxCDATANodeLength(maxCDATANodeLength);
 		xmlStreamFilterFactory.setMaxTextNodeLength(maxTextNodeLength);
 
-		StreamProcessor streamProcessor = new AccumulatorStreamProcessor(limitBytes, xmlStreamFilterFactory, writer);
+		StreamProcessor streamProcessor = new AccumulatorStreamFilterProcessor(limitBytes, xmlStreamFilterFactory, writer);
 		DelegateInputStream out = new DelegateInputStream(bout, streamProcessor, callback);
 		
 		byte[] byteArray = IOUtils.toByteArray(out);

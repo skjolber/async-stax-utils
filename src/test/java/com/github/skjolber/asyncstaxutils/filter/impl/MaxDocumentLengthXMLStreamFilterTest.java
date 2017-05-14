@@ -14,7 +14,7 @@ import com.fasterxml.aalto.AsyncXMLStreamReader;
 import com.github.skjolber.asyncstaxutils.filter.impl.XMLStreamEventFilterWriter;
 import com.github.skjolber.asyncstaxutils.AbstractStreamTest;
 import com.github.skjolber.asyncstaxutils.filter.impl.MaxDocumentLengthXMLStreamFilter;
-import com.github.skjolber.asyncstaxutils.filter.impl.MaxNodeLengthXmlStreamFilter;
+import com.github.skjolber.asyncstaxutils.filter.impl.MaxNodeLengthXMLStreamFilter;
 import com.github.skjolber.asyncstaxutils.filter.impl.XMLStreamWriterLengthEstimator;
 
 public class MaxDocumentLengthXMLStreamFilterTest extends AbstractStreamTest {
@@ -82,10 +82,10 @@ public class MaxDocumentLengthXMLStreamFilterTest extends AbstractStreamTest {
 		writer.close();
 
 		if(filtered) {
-			count += MaxNodeLengthXmlStreamFilter.FILTER_END_MESSAGE.length() + 7;
+			count += MaxNodeLengthXMLStreamFilter.FILTER_END_MESSAGE.length() + 7;
 		}
 		
-		if(!stringWriter.toString().contains(MaxNodeLengthXmlStreamFilter.FILTER_END_MESSAGE)) {
+		if(!stringWriter.toString().contains(MaxNodeLengthXMLStreamFilter.FILTER_END_MESSAGE)) {
 			Assert.assertEquals(XMLStreamReader.END_DOCUMENT, reader.getEventType());
 		}
 

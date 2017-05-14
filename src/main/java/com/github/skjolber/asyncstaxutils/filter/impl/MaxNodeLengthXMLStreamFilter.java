@@ -25,9 +25,9 @@ import org.codehaus.stax2.XMLStreamReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import com.fasterxml.aalto.AsyncXMLStreamReader;
-import com.github.skjolber.asyncstaxutils.filter.AbstractXmlStreamFilter;
+import com.github.skjolber.asyncstaxutils.filter.AbstractXMLStreamFilter;
 
-public class MaxNodeLengthXmlStreamFilter extends AbstractXmlStreamFilter {
+public class MaxNodeLengthXMLStreamFilter extends AbstractXMLStreamFilter {
 		
 	protected final int maxTextNodeLength; // not always in use, if so set to max int
 	protected final int maxCDATANodeLength;  // not always in use, if so set to max int
@@ -64,7 +64,7 @@ public class MaxNodeLengthXmlStreamFilter extends AbstractXmlStreamFilter {
 		return characters.length();
 	}
 	
-	public MaxNodeLengthXmlStreamFilter(boolean declaration, int maxTextNodeLength, int maxCDATANodeLength, int maxDocumentLength, XMLStreamWriterLengthEstimator estimator) {
+	public MaxNodeLengthXMLStreamFilter(boolean declaration, int maxTextNodeLength, int maxCDATANodeLength, int maxDocumentLength, XMLStreamWriterLengthEstimator estimator) {
 		super(declaration);
 		
 		if(maxTextNodeLength < -1) {

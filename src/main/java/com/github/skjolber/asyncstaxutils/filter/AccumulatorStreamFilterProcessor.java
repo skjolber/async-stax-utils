@@ -15,12 +15,14 @@
  * 
  */
 
-package com.github.skjolber.asyncstaxutils;
+package com.github.skjolber.asyncstaxutils.filter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Writer;
 
-public class AccumulatorStreamProcessor implements StreamProcessor {
+import com.github.skjolber.asyncstaxutils.StreamProcessor;
+
+public class AccumulatorStreamFilterProcessor implements StreamProcessor {
 
 	private static class LimitByteArrayOutputStream extends ByteArrayOutputStream {
 		
@@ -39,11 +41,11 @@ public class AccumulatorStreamProcessor implements StreamProcessor {
 	
 	private boolean limited = false;
 	
-	private StreamProcessorFactory factory;
+	private StreamFilterProcessorFactory factory;
 	private StreamProcessor streamProcessor;
 	private Writer writer;
 
-	public AccumulatorStreamProcessor(int limit, StreamProcessorFactory factory, Writer writer) {
+	public AccumulatorStreamFilterProcessor(int limit, StreamFilterProcessorFactory factory, Writer writer) {
 		this.limit = limit;
 		this.factory = factory;
 		this.writer = writer;

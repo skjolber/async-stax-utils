@@ -5,31 +5,31 @@ import org.junit.Test;
 
 import com.github.skjolber.asyncstaxutils.filter.DefaultXMLStreamFilter;
 import com.github.skjolber.asyncstaxutils.filter.impl.MaxDocumentLengthXMLStreamFilter;
-import com.github.skjolber.asyncstaxutils.filter.impl.MaxNodeLengthStreamProcessorFactory;
-import com.github.skjolber.asyncstaxutils.filter.impl.MaxNodeLengthXmlStreamFilter;
+import com.github.skjolber.asyncstaxutils.filter.impl.MaxNodeLengthXMLStreamFilterProcessorFactory;
+import com.github.skjolber.asyncstaxutils.filter.impl.MaxNodeLengthXMLStreamFilter;
 
-public class MaxNodeLengthStreamProcessorFactoryTest {
+public class MaxNodeLengthXMLStreamFilterProcessorFactoryTest {
 
 	@Test
 	public void test1() {
-		MaxNodeLengthStreamProcessorFactory factory = new MaxNodeLengthStreamProcessorFactory();
+		MaxNodeLengthXMLStreamFilterProcessorFactory factory = new MaxNodeLengthXMLStreamFilterProcessorFactory();
 		
 		Assert.assertTrue(factory.createInstance(null) instanceof DefaultXMLStreamFilter);
 	}
 	
 	@Test
 	public void test2() {
-		MaxNodeLengthStreamProcessorFactory factory = new MaxNodeLengthStreamProcessorFactory();
+		MaxNodeLengthXMLStreamFilterProcessorFactory factory = new MaxNodeLengthXMLStreamFilterProcessorFactory();
 		factory.setMaxDocumentLength(1024);
 		Assert.assertTrue(factory.createInstance(null) instanceof MaxDocumentLengthXMLStreamFilter);
 	}
 
 	@Test
 	public void test3() {
-		MaxNodeLengthStreamProcessorFactory factory = new MaxNodeLengthStreamProcessorFactory();
+		MaxNodeLengthXMLStreamFilterProcessorFactory factory = new MaxNodeLengthXMLStreamFilterProcessorFactory();
 		factory.setMaxDocumentLength(1024);
 		factory.setMaxCDATANodeLength(1024);
-		Assert.assertTrue(factory.createInstance(null) instanceof MaxNodeLengthXmlStreamFilter);
+		Assert.assertTrue(factory.createInstance(null) instanceof MaxNodeLengthXMLStreamFilter);
 	}
 
 }

@@ -26,9 +26,9 @@ import org.codehaus.stax2.XMLStreamReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import com.fasterxml.aalto.AsyncXMLStreamReader;
-import com.github.skjolber.asyncstaxutils.filter.AbstractXmlStreamFilter;
+import com.github.skjolber.asyncstaxutils.filter.AbstractXMLStreamFilter;
 
-public class MaxDocumentLengthXMLStreamFilter extends AbstractXmlStreamFilter {
+public class MaxDocumentLengthXMLStreamFilter extends AbstractXMLStreamFilter {
 	
 	protected final XMLStreamEventFilterWriter eventSizeFilter;
 	

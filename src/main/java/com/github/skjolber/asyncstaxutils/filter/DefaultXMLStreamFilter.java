@@ -24,7 +24,7 @@ import org.codehaus.stax2.XMLStreamWriter2;
 
 import com.fasterxml.aalto.AsyncXMLStreamReader;
 
-public class DefaultXMLStreamFilter extends AbstractXmlStreamFilter {
+public class DefaultXMLStreamFilter extends AbstractXMLStreamFilter {
 
 	public DefaultXMLStreamFilter(boolean declaration) {
 		super(declaration);

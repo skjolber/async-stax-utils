@@ -19,46 +19,36 @@ package com.github.skjolber.asyncstaxutils;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.codehaus.stax2.XMLStreamWriter2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.aalto.AsyncByteArrayFeeder;
 import com.fasterxml.aalto.AsyncXMLStreamReader;
-import com.github.skjolber.asyncstaxutils.filter.XMLStreamFilter;
 
-public class XMLStreamFilterProcessor implements StreamProcessor {
+public class DefaultXMLStreamProcessor implements StreamProcessor {
 
-	private static Logger logger = LoggerFactory.getLogger(XMLStreamFilterProcessor.class);
+	private static Logger logger = LoggerFactory.getLogger(DefaultXMLStreamProcessor.class);
+
+	protected AsyncXMLStreamReader<AsyncByteArrayFeeder> reader;
 	
-	public static enum State {
-		FULL, PARTIAL, ERROR;
-	}
+	protected boolean closed;
+	protected boolean error;
 	
-	private AsyncXMLStreamReader<AsyncByteArrayFeeder> reader;
-	private XMLStreamWriter2 writer;
-	private XMLStreamFilter filter;
-	
-	private boolean closed;
-	private boolean error;
-	
-	public XMLStreamFilterProcessor(AsyncXMLStreamReader<AsyncByteArrayFeeder> reader, XMLStreamWriter2 writer, XMLStreamFilter filter) {
+	public DefaultXMLStreamProcessor(AsyncXMLStreamReader<AsyncByteArrayFeeder> reader) {
 		this.reader = reader;
-		this.writer = writer;
-		this.filter = filter;
 	}
 
 	public void payload(byte[] buffer, int offset, int length) {
 		if(!closed) {
 			try {
 				reader.getInputFeeder().feedInput(buffer, offset, length);
-				
-				filter.filter(reader, writer);
+
+				process();
 
 				if(reader.getEventType() != AsyncXMLStreamReader.EVENT_INCOMPLETE) { // end of document will never occur here
 					closed = true;
 				}
-			} catch(XMLStreamException e) {
+			} catch(Exception e) {
 				handleFilterException(e);
 				
 				closed = true;
@@ -70,18 +60,11 @@ public class XMLStreamFilterProcessor implements StreamProcessor {
 		}
 	}
 
-	protected void handleFilterException(XMLStreamException e) {
+	protected void handleFilterException(Exception e) {
 		// this logic might be moved into filters
 		// exceptions will normally be from reader, 
 		// writer would normally never throw an exception
-		logger.warn("Problem filtering XML payload", e);
-		
 		error = true;
-		try {
-			writer.writeComment(" FILTERING EXCEPTION OCCORED ");
-		} catch (XMLStreamException e1) {
-			// ignore
-		}
 	}
 
 	public void close() {
@@ -90,8 +73,8 @@ public class XMLStreamFilterProcessor implements StreamProcessor {
 			try {
 				reader.getInputFeeder().endOfInput();			
 				
-				filter.filter(reader, writer);
-			} catch(XMLStreamException e) {
+				process();
+			} catch(Exception e) {
 				handleFilterException(e);
 			} finally {
 				shutdown();
@@ -99,20 +82,28 @@ public class XMLStreamFilterProcessor implements StreamProcessor {
 		}
 	}
 
-	private void shutdown() {
+	protected void shutdown() {
 		try {
 			reader.close();
 		} catch (XMLStreamException e) {
 			logger.warn("Problem closing reader" , e);
-		}
-		try {
-			writer.close();
-		} catch (XMLStreamException e) {
-			logger.warn("Problem closing writer" , e);
 		}
 	}
 
 	public boolean isError() {
 		return error;
 	}
+	
+	/**
+	 * Process reader payload, the default just reads untill and incomplete event.
+	 */
+	
+	protected void process() throws Exception {
+		// do nothing
+		while(reader.getEventType() != AsyncXMLStreamReader.EVENT_INCOMPLETE && reader.hasNext()) {
+			reader.next();
+		}
+	}
+
+
 }

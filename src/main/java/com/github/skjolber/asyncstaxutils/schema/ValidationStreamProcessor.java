@@ -18,9 +18,10 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import com.fasterxml.aalto.AsyncByteArrayFeeder;
 import com.fasterxml.aalto.AsyncXMLStreamReader;
+import com.github.skjolber.asyncstaxutils.DefaultXMLStreamProcessor;
 import com.github.skjolber.asyncstaxutils.StreamProcessor;
 
-public class ValidationStreamProcessor implements StreamProcessor {
+public class ValidationStreamProcessor extends DefaultXMLStreamProcessor{
 
 	private static Logger logger = LoggerFactory.getLogger(ValidationStreamProcessor.class);
 	
@@ -53,36 +54,27 @@ public class ValidationStreamProcessor implements StreamProcessor {
 		}
 	};
 
-	private final AsyncXMLStreamReader<AsyncByteArrayFeeder> reader;
 	private final ValidatorHandler handler;
 	private final LexicalHandler lexicalHandler;
 	
-	private boolean closed;
-
 	public ValidationStreamProcessor(AsyncXMLStreamReader<AsyncByteArrayFeeder> reader, ValidatorHandler handler) {
 		this(reader, handler, null);
 	}
 
 	public ValidationStreamProcessor(AsyncXMLStreamReader<AsyncByteArrayFeeder> reader, ValidatorHandler handler, LexicalHandler lexicalHandler) {
-		this.reader = reader;
+		super(reader);
 		this.handler = handler;
 		this.lexicalHandler = lexicalHandler;
 	}
+
 	@Override
-	public void payload(byte[] buffer, int offset, int length) {
-		if(!closed) {
-			try {
-				reader.getInputFeeder().feedInput(buffer, offset, length);
-				
-				copy(reader, handler, lexicalHandler);
-			} catch(Exception e) {
-				handleException(e);
-			}
-		}
+	protected void process() throws Exception {
+		copy(reader, handler, lexicalHandler);
 	}
 
-	private void handleException(Exception e) {
+	protected void handleFilterException(Exception e) {
 		logger.warn("Unable to validate document", e);
+		super.handleFilterException(e);
 		
 		ErrorHandler errorHandler = handler.getErrorHandler();
 		if(errorHandler != null) {
@@ -180,24 +172,6 @@ public class ValidationStreamProcessor implements StreamProcessor {
 		}
 	}
 	
-	@Override
-	public void close() {
-		try {
-			this.reader.getInputFeeder().endOfInput();
-			
-			copy(reader, handler, lexicalHandler);
-		} catch(Exception e) {
-			handleException(e);
-		} finally {
-			try {
-				this.reader.close();
-			} catch (XMLStreamException e) {
-				// ignore
-			}
-		}
-
-	}
-
     public static Attributes getAttributes(AsyncXMLStreamReader<AsyncByteArrayFeeder> streamReader) {
         AttributesImpl attrs = new AttributesImpl();
         // Adding namespace declaration as attributes is necessary because

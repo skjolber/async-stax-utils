@@ -31,16 +31,16 @@ import com.fasterxml.aalto.AsyncXMLInputFactory;
 import com.fasterxml.aalto.stax.InputFactoryImpl;
 import com.fasterxml.aalto.stax.OutputFactoryImpl;
 import com.github.skjolber.asyncstaxutils.StreamProcessor;
-import com.github.skjolber.asyncstaxutils.StreamProcessorFactory;
+import com.github.skjolber.asyncstaxutils.filter.StreamFilterProcessorFactory;
 
-public abstract class AbstractStreamProcessorFactory implements StreamProcessorFactory {
+public abstract class AbstractStreamFilterProcessorFactory implements StreamFilterProcessorFactory {
 
 	protected final AsyncXMLInputFactory asyncInputFactory;
 	protected final XMLOutputFactory2 outputFactory;
 	
 	protected boolean declaration;
 	
-	public AbstractStreamProcessorFactory() {
+	public AbstractStreamFilterProcessorFactory() {
 		asyncInputFactory = new InputFactoryImpl();
 		asyncInputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
 		asyncInputFactory.setProperty(XMLInputFactory.IS_COALESCING, false);

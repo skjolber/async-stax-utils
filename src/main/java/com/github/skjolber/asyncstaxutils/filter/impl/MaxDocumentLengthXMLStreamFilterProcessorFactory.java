@@ -13,18 +13,18 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.aalto.AsyncByteArrayFeeder;
 import com.fasterxml.aalto.AsyncXMLStreamReader;
 import com.github.skjolber.asyncstaxutils.StreamProcessor;
-import com.github.skjolber.asyncstaxutils.XMLStreamFilterProcessor;
+import com.github.skjolber.asyncstaxutils.filter.XMLStreamFilterProcessor;
 
-public class MaxDocumentLengthStreamProcessorFactory extends AbstractStreamProcessorFactory {
+public class MaxDocumentLengthXMLStreamFilterProcessorFactory extends AbstractStreamFilterProcessorFactory {
 
-	private static Logger logger = LoggerFactory.getLogger(AbstractStreamProcessorFactory.class);
+	private static Logger logger = LoggerFactory.getLogger(AbstractStreamFilterProcessorFactory.class);
 	
 	protected int maxDocumentLength = -1;
 
-	public MaxDocumentLengthStreamProcessorFactory() {
+	public MaxDocumentLengthXMLStreamFilterProcessorFactory() {
 	}
 
-	public MaxDocumentLengthStreamProcessorFactory(int maxDocumentLength) {
+	public MaxDocumentLengthXMLStreamFilterProcessorFactory(int maxDocumentLength) {
 		this.maxDocumentLength = maxDocumentLength;
 	}
 	

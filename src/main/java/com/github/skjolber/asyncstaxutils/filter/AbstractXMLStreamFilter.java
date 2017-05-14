@@ -21,14 +21,14 @@ import javax.xml.stream.XMLStreamException;
 import org.codehaus.stax2.XMLStreamReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
-public abstract class AbstractXmlStreamFilter implements XMLStreamFilter {
+public abstract class AbstractXMLStreamFilter implements XMLStreamFilter {
 
 	public static final String FILTER_TRUNCATE_MESSAGE = "...TRUNCATED BY ";
 	public static final String FILTER_END_MESSAGE = " FILTERED ";
 
 	protected final boolean declaration;
 
-	public AbstractXmlStreamFilter(boolean declaration) {
+	public AbstractXMLStreamFilter(boolean declaration) {
 		this.declaration = declaration;
 	}
 	

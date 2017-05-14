@@ -27,7 +27,7 @@ Example dependency config:
 <dependency>
 	<groupId>com.github.skjolber</groupId>
 	<artifactId>async-stax-utils</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -56,7 +56,8 @@ or input
 InputStream dis = new DelegateOutputStream(in, streamProcessor, callback);
 ```
 
-and pass the wrappers up/down your processing pipe.
+and pass the wrappers up/down your processing pipe. The default `StreamProcessor` for XML is `DefaultXMLStreamProcessor` which 
+just parses XML events until the current buffer is exhausted.
 
 ## Filters
 Filtering is performed via the `XMLStreamFilter` interface, which consists of a single method
@@ -65,19 +66,19 @@ Filtering is performed via the `XMLStreamFilter` interface, which consists of a 
 void filter(XMLStreamReader2 reader, XMLStreamWriter2 writer) throws XMLStreamException;
 ```
 
-### StreamProcessorFactory
-Tying streams and filters together, `StreamProcessorFactory` takes a `Writer`, used to store the filtered result, and returns a `StreamProcessor`.
+### StreamFilterProcessorFactory
+Tying streams and filters together, `StreamFilterProcessorFactory` takes a `Writer`, used to store the filtered result, and returns a `StreamProcessor`.
 
 ```java
-StreamProcessorFactory streamProcessorFactory = ...; // init
+StreamFilterProcessorFactory streamProcessorFactory = ...; // init
 final Writer output = new StringWriter(8 * 1024); // for use in callback
 StreamProcessor streamProcessor = factory.async(output);
 ```
 
 The resulting `StreamProcessor` be passed to the constructors of `DelegateOutputStream` or `DelegateInputStream`. 
 
-### AccumulatorStreamProcessor
-This processor tries to cache some data, and filter using a synchronous parser if possible. This avoids the overhead the asynchronous parser for documents of limited size. Take a factory `StreamProcessorFactory`, determine the raw stream cache size,
+### AccumulatorStreamFilterProcessor
+This processor tries to cache some data, and filter using a synchronous parser if possible. This avoids the overhead the asynchronous parser for documents of limited size. Take a factory `StreamFilterProcessorFactory`, determine the raw stream cache size,
 
 ```java
 int maxCacheLengthBytes = 1024;
@@ -85,7 +86,7 @@ int maxCacheLengthBytes = 1024;
 construct the `AccumulatorStreamProcessor` using 
 
 ```java
-StreamProcessor streamProcessor = new AccumulatorStreamProcessor(maxCacheLengthBytes, xmlStreamFilterFactory, output);
+StreamProcessor streamProcessor = new AccumulatorStreamProcessor(maxCacheLengthBytes, streamFilterProcessorFactory, output);
 ```
 
 finally make the delegate input

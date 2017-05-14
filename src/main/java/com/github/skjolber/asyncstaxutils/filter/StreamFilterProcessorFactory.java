@@ -15,11 +15,13 @@
  * 
  */
 
-package com.github.skjolber.asyncstaxutils;
+package com.github.skjolber.asyncstaxutils.filter;
 
 import java.io.Writer;
 
-public interface StreamProcessorFactory {
+import com.github.skjolber.asyncstaxutils.StreamProcessor;
+
+public interface StreamFilterProcessorFactory {
 
 	StreamProcessor async(Writer writer);
 	

@@ -30,13 +30,13 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.aalto.AsyncByteArrayFeeder;
 import com.fasterxml.aalto.AsyncXMLStreamReader;
 import com.github.skjolber.asyncstaxutils.StreamProcessor;
-import com.github.skjolber.asyncstaxutils.XMLStreamFilterProcessor;
 import com.github.skjolber.asyncstaxutils.filter.DefaultXMLStreamFilter;
 import com.github.skjolber.asyncstaxutils.filter.XMLStreamFilter;
+import com.github.skjolber.asyncstaxutils.filter.XMLStreamFilterProcessor;
 
-public class MaxNodeLengthStreamProcessorFactory extends MaxDocumentLengthStreamProcessorFactory {
+public class MaxNodeLengthXMLStreamFilterProcessorFactory extends MaxDocumentLengthXMLStreamFilterProcessorFactory {
 
-	private static Logger logger = LoggerFactory.getLogger(MaxNodeLengthStreamProcessorFactory.class);
+	private static Logger logger = LoggerFactory.getLogger(MaxNodeLengthXMLStreamFilterProcessorFactory.class);
 
 	protected int maxTextNodeLength = -1; // not always in use, if so set to max int
 	protected int maxCDATANodeLength = -1;  // not always in use, if so set to max int
@@ -46,7 +46,7 @@ public class MaxNodeLengthStreamProcessorFactory extends MaxDocumentLengthStream
 	public XMLStreamFilter createInstance(Writer writer) {
 		XMLStreamFilter filter;
 		if(maxCDATANodeLength != -1 || maxTextNodeLength != -1) {
-			filter = new MaxNodeLengthXmlStreamFilter(declaration, maxTextNodeLength, maxCDATANodeLength, maxDocumentLength, estimator);
+			filter = new MaxNodeLengthXMLStreamFilter(declaration, maxTextNodeLength, maxCDATANodeLength, maxDocumentLength, estimator);
 		} else if(maxDocumentLength != -1) {
 			filter = new MaxDocumentLengthXMLStreamFilter(declaration, new XMLStreamEventFilterWriter(writer, maxDocumentLength));
 		} else {
@@ -91,7 +91,7 @@ public class MaxNodeLengthStreamProcessorFactory extends MaxDocumentLengthStream
 	public StreamProcessor async(Writer writer) {
 		XMLStreamFilter filter;
 		if(maxCDATANodeLength != -1 || maxTextNodeLength != -1) {
-			filter = new MaxNodeLengthXmlStreamFilter(declaration, maxTextNodeLength, maxCDATANodeLength, maxDocumentLength, estimator);
+			filter = new MaxNodeLengthXMLStreamFilter(declaration, maxTextNodeLength, maxCDATANodeLength, maxDocumentLength, estimator);
 		} else if(maxDocumentLength != -1) {
 			return super.async(writer);
 		} else {
@@ -111,7 +111,7 @@ public class MaxNodeLengthStreamProcessorFactory extends MaxDocumentLengthStream
 	@Override
 	protected void sync(Writer output, ByteArrayInputStream bis) {
 		if(maxCDATANodeLength != -1 || maxTextNodeLength != -1) {
-			sync(output, bis, new MaxNodeLengthXmlStreamFilter(declaration, maxTextNodeLength, maxCDATANodeLength, maxDocumentLength, estimator));
+			sync(output, bis, new MaxNodeLengthXMLStreamFilter(declaration, maxTextNodeLength, maxCDATANodeLength, maxDocumentLength, estimator));
 		} else if(maxDocumentLength != -1) {
 			super.sync(output, bis);
 		} else {
