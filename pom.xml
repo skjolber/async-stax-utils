@@ -3,7 +3,7 @@
 	<groupId>com.github.skjolber</groupId>
 	<artifactId>async-stax-utils</artifactId>
 	<name>async-stax-utils</name>
-	<version>1.0.3</version>
+	<version>1.0.4-SNAPSHOT</version>
 	<description>Asynchronous StAX-utils</description>
 	<url>https://github.com/skjolber/async-stax-utils</url>
 
@@ -42,7 +42,7 @@
 		<developerConnection>
 			scm:git:git@github.com:skjolber/async-stax-utils.git</developerConnection>
 		<url>git@github.com:skjolber/async-stax-utils.git</url>
-		<tag>async-stax-utils-1.0.3</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
