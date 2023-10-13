@@ -19,15 +19,26 @@ Bugs, feature suggestions and help requests can be filed with the [issue-tracker
 # Obtain
 The project is based on [Maven] and is available at Maven central repository.
 
-Example dependency config:
+<details>
+  <summary>Maven coordinates</summary>
+  
+Add
+ 
+```xml
+<async-stax-utils.version>1.0.3</async-stax-utils.version>
+```
+
+and
 
 ```xml
 <dependency>
 	<groupId>com.github.skjolber</groupId>
 	<artifactId>async-stax-utils</artifactId>
-	<version>1.0.2</version>
+    <version>${async-stax-utils.version}</version>
 </dependency>
 ```
+
+</details>
 
 # Usage
 The asynchronous nature adds some processing overhead and setup complexity compared to regular synchronous approach. If you prefer skipping to code examples, see [unit tests](src/test/java/com/github/skjolber/asyncstaxutils). 
@@ -108,12 +119,12 @@ DelegateOutputStream dis = new DelegateOutputStream(bin, listener, callback);
 streams and pass them up or down your pipe.
 
 # History
-- [1.0.2]: Better class names and packages, some some reuse of XML-related processors.
+- 1.0.3: Maintenance release; bumped dependencies and added modules
+- 1.0.2: Better class names and packages, some some reuse of XML-related processors.
 - 1.0.1: Better document-size length filtering.
 - 1.0.0: Initial release.
 
 [Apache 2.0]:          	http://www.apache.org/licenses/LICENSE-2.0.html
 [Aalto-xml]:			https://github.com/FasterXML/aalto-xml
 [issue-tracker]:       	https://github.com/skjolber/async-stax-utils/issues
-[1.0.2]:                https://github.com/skjolber-async-stax-utils/releases
 [Maven]:                http://maven.apache.org/
