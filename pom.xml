@@ -1,11 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.skjolber</groupId>
 	<artifactId>async-stax-utils</artifactId>
 	<name>async-stax-utils</name>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.3</version>
 	<description>Asynchronous StAX-utils</description>
 	<url>https://github.com/skjolber/async-stax-utils</url>
 
@@ -44,7 +42,7 @@
 		<developerConnection>
 			scm:git:git@github.com:skjolber/async-stax-utils.git</developerConnection>
 		<url>git@github.com:skjolber/async-stax-utils.git</url>
-		<tag>HEAD</tag>
+		<tag>async-stax-utils-1.0.3</tag>
 	</scm>
 
 	<issueManagement>
