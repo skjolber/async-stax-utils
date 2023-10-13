@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.skjolber</groupId>
 	<artifactId>async-stax-utils</artifactId>
@@ -11,20 +13,20 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 
-		<junit.version>4.12</junit.version>
-		<mockito.version>2.7.22</mockito.version>
+		<junit.version>4.13.2</junit.version>
+		<mockito.version>4.11.0</mockito.version>
 		<hamcrest.version>1.3</hamcrest.version>
 
-        <aalto.version>1.0.0</aalto.version>
-		<stax2-api.version>4.0.0</stax2-api.version>
+		<aalto.version>1.3.2</aalto.version>
+		<stax2-api.version>4.2</stax2-api.version>
 		<stax-api.version>1.0-2</stax-api.version>
-		<commons-io.version>2.5</commons-io.version>
+		<commons-io.version>2.14.0</commons-io.version>
 
-		<logback.version>1.2.3</logback.version>
-		<slf4j.version>1.7.22</slf4j.version>
+		<logback.version>1.2.12</logback.version>
+		<slf4j.version>1.7.36</slf4j.version>
 
 		<build-helper-maven-plugin.version>1.9.1</build-helper-maven-plugin.version>
 	</properties>
@@ -39,7 +41,8 @@
 
 	<scm>
 		<connection>scm:git:git@github.com:skjolber/async-stax-utils.git</connection>
-		<developerConnection>scm:git:git@github.com:skjolber/async-stax-utils.git</developerConnection>
+		<developerConnection>
+			scm:git:git@github.com:skjolber/async-stax-utils.git</developerConnection>
 		<url>git@github.com:skjolber/async-stax-utils.git</url>
 		<tag>HEAD</tag>
 	</scm>
@@ -55,27 +58,29 @@
 			<email>thomas.skjolberg@gmail.com</email>
 		</developer>
 	</developers>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>com.fasterxml</groupId>
 			<artifactId>aalto-xml</artifactId>
 			<version>${aalto.version}</version>
 		</dependency>
-	    <dependency>
-	      <groupId>org.codehaus.woodstox</groupId>
-	      <artifactId>stax2-api</artifactId>
-	      <version>${stax2-api.version}</version>
-	    </dependency>
 		<dependency>
-		    <groupId>javax.xml.stream</groupId>
-		    <artifactId>stax-api</artifactId>
-		    <version>${stax-api.version}</version>
+			<groupId>org.codehaus.woodstox</groupId>
+			<artifactId>stax2-api</artifactId>
+			<version>${stax2-api.version}</version>
 		</dependency>
+		<!--
 		<dependency>
-		    <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-api</artifactId>
-		    <version>${slf4j.version}</version>
+			<groupId>javax.xml.stream</groupId>
+			<artifactId>stax-api</artifactId>
+			<version>${stax-api.version}</version>
+		</dependency>
+		-->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -102,10 +107,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>ch.qos.logback</groupId>
-		    <artifactId>logback-classic</artifactId>
-		    <version>${logback.version}</version>
-		    <scope>test</scope>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -122,7 +127,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.8</version>
+				<version>0.8.10</version>
 				<configuration>
 					<excludes>
 						<exclude>com/skjolberg/example/spring/soap/v1/*.class</exclude>
@@ -167,7 +172,7 @@
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.7</version>
+				<version>1.6.13</version>
 				<extensions>true</extensions>
 				<executions>
 					<execution>
@@ -187,7 +192,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>3.3.0</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -200,7 +205,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.4</version>
+				<version>3.6.0</version>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -221,6 +226,26 @@
 					<goals>deploy</goals>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.moditect</groupId>
+				<artifactId>moditect-maven-plugin</artifactId>
+				<version>1.0.0.Final</version>
+				<executions>
+					<execution>
+						<id>add-module-infos</id>
+						<phase>package</phase>
+						<goals>
+							<goal>add-module-info</goal>
+						</goals>
+						<configuration>
+							<overwriteExistingFiles>true</overwriteExistingFiles>
+							<module>
+								<moduleInfoFile>src/main/java9/module-info.java</moduleInfoFile>
+							</module>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -233,7 +258,8 @@
 			-->
 			<id>release</id>
 			<properties>
-				<!-- this is useful when the desired key is not the default (first)
+				<!-- this is useful when the desired key is not the default
+				(first)
 					 export GPG_KEY_NAME=ABCDEF01
 				 -->
 				<gpg.executable>gpg</gpg.executable>
